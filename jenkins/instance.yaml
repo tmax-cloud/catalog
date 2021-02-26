@@ -1,0 +1,19 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: jenkins-template-instance
+  namespace: default
+  annotations:
+    template-version: 5.0.0
+    tested-operator-version: v0.2.0
+spec:
+  clustertemplate:
+    metadata:
+      name: jenkins-template
+    parameters:
+    - name: APP_NAME
+      value: jenkins-test-deploy
+    - name: STORAGE
+      value: 10Gi
+    - name: SERVICE_TYPE
+      value: LoadBalancer

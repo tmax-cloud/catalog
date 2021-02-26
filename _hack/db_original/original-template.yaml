@@ -1,0 +1,127 @@
+apiVersion: tmax.io/v1
+kind: ClusterTemplate
+metadata:
+  name: '@@TEMPLATE_NAME@@'
+  annotations:
+    template-version: 1.1.0
+    tested-operator-version: 4.1.0.23
+shortDescription: '@@SHORT_DESCRIPTION@@'
+longDescription: '@@LONG_DESCRIPTION@@'
+urlDescription: '@@URL_DESCRIPTION@@'
+imageUrl: '@@THUMBNAIL@@'
+provider: tmax
+tags:
+- db
+- '@@TAG@@'
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APP_NAME}-service
+    labels:
+      app: ${APP_NAME}
+  spec:
+    type: ${SERVICE_TYPE}
+    ports:
+      - port: '@@PORT@@'
+    selector:
+      app: ${APP_NAME}
+      tier: '@@TIER@@'
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: ${APP_NAME}-pvc
+    labels:
+      app: ${APP_NAME}
+  spec:
+    storageClassName: csi-cephfs-sc
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: ${DB_STORAGE}
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: ${APP_NAME}-secret
+  type: Opaque
+  stringData:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: '@@DEPLOY_NAME@@'
+    labels:
+      app: ${APP_NAME}
+  spec:
+    selector:
+      matchLabels:
+        app: ${APP_NAME}
+        tier: '@@TIER@@'
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: ${APP_NAME}
+          tier: mysql
+      spec:
+        containers:
+        - image: '@@IMAGE@@'
+          name: '@@NAME@@'
+          env:
+          ports:
+          - containerPort: '@@PORT@@'
+            name: '@@NAME@@'
+          volumeMounts:
+          - name: '@@VOLUME_NAME@@'
+            mountPath: '@@VOLUMe_MOUNTPATH@@'
+        volumes:
+        - name: '@@VOLUME_NAME@@'
+          persistentVolumeClaim:
+            claimName: ${APP_NAME}-pvc
+parameters:
+- name: APP_NAME
+  displayName: AppName
+  description: Application name
+  required: true
+- name: DB_STORAGE
+  displayName: DBStorage
+  description: Storage size for DB
+  required: true
+- name: SERVICE_TYPE
+  displayName: ServiceType
+  description: Service Type (ClsuterIP/NodePort/LoadBalancer)
+  required: true
+plans:
+- name: '@@PLAN_NAME@@'
+  description: '@@PLAN_DESCRIPTION@@'
+  metadata:
+    bullets:
+    - 'Storage Capacity: 5Gi'
+    costs:
+      amount: 100
+      unit: $
+  free: false
+  bindable: true
+  plan_updateable: false
+  schemas:
+    service_instance:
+      create:
+        parameters:
+          DB_STORAGE: 5Gi
+- name: '@@PLAN_NAME@@'
+  description: '@@PLAN_DESCRIPTION@@'
+  metadata:
+    bullets:
+    - 'Storage Capacity: 30Gi'
+    costs:
+      amount: 500
+      unit: $
+  free: false
+  bindable: true
+  plan_updateable: false
+  schemas:
+    service_instance:
+      create:
+        parameters:
+          DB_STORAGE: 30Gi

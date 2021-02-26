@@ -1,0 +1,37 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: '@@INSTANCE_NAME@@'
+  namespace: default
+  annotations:
+    template-version: '@@VERSION@@'
+    tested-operator-version: '@@OPVER@@'
+spec:
+  clustertemplate:
+    metadata:
+      name: '@@TEMPLATE_NAME@@'
+    parameters:
+    - name: APP_NAME
+      value: '@@PIPELINE_NAME@@'
+    - name: SERVICE_ACCOUNT_NAME
+      value: tutorial-service
+    - name: GIT_URL
+      value: '@@GIT_URL@@'
+    - name: GIT_REV
+      value: master
+    - name: IMAGE_URL
+      value: '<이미지 주소>'
+    - name: REGISTRY_SECRET_NAME
+      value: ''
+    - name: WAS_PORT
+      value: 8080
+    - name: SERVICE_TYPE
+      value: LoadBalancer
+    - name: PACKAGE_SERVER_URL
+      value: ''
+    - name: DEPLOY_ENV_JSON
+      value: "{'EX':'EXVAL', 'EX2': 'EXVAL2'}"
+    - name: DEPLOY_RESOURCE_CPU
+      value: 500m
+    - name: DEPLOY_RESOURCE_MEM
+      value: 500Mi

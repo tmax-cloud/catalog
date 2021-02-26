@@ -1,0 +1,25 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: mysql-template-instance
+  namespace: default
+  annotations:
+    template-version: 5.0.0
+    tested-operator-version: v0.2.0
+spec:
+  clustertemplate:
+    metadata:
+      name: mysql-template
+    parameters:
+    - name: APP_NAME
+      value: mysql-sample-app
+    - name: DB_STORAGE
+      value: "10Gi"
+    - name: SERVICE_TYPE
+      value: ClusterIP
+    - name: MYSQL_USER
+      value: root1
+    - name: MYSQL_PASSWORD
+      value: tmax@23
+    - name: MYSQL_DATABASE
+      value: root1

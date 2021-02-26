@@ -1,0 +1,19 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: '@@INSTANCE_NAME@@'
+  namespace: default
+  annotations:
+    template-version: 1.1.0
+    tested-operator-version: 4.1.0.23
+spec:
+  clustertemplate:
+    metadata:
+      name: '@@TEMPLATE_NAME@@'
+    parameters:
+    - name: APP_NAME
+      value: '@@APP_NAME@@'
+    - name: DB_STORAGE
+      value: "10Gi"
+    - name: SERVICE_TYPE
+      value: ClusterIP
