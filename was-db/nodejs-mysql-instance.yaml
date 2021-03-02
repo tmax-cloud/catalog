@@ -1,24 +1,34 @@
 apiVersion: tmax.io/v1
 kind: TemplateInstance
 metadata:
-  name: '@@INSTANCE_NAME@@'
+  name: nodejs-mysql-template-instance
   namespace: default
   annotations:
-    template-version: '@@VERSION@@'
-    tested-operator-version: '@@OPVER@@'
+    template-version: 5.0.0
+    tested-operator-version: v0.2.0
 spec:
   clustertemplate:
     metadata:
-      name: '@@TEMPLATE_NAME@@'
+      name: nodejs-mysql-template
     parameters:
     - name: APP_NAME
-      value: '@@PIPELINE_NAME@@'
+      value: nodejs-mysql-sample-app
+    - name: DB_SERVICE_TYPE
+      value: ClusterIP
+    - name: DB_STORAGE
+      value: 20Gi
+    - name: MYSQL_USER
+      value: root1
+    - name: MYSQL_PASSWORD
+      value: tmax@23
+    - name: MYSQL_DATABASE
+      value: root1
     - name: GIT_TYPE
       value: gitlab
     - name: GIT_API_URL
       value: http://<깃랩URL>
     - name: GIT_REPOSITORY
-      value: '@@GIT_REPOSITORY@@'
+      value: root/nodejs-mysql-crud # Original: https://github.com/sunghyunkim3/nodejs-mysql-crud
     - name: GIT_TOKEN_SECRET
       value: cicd-example-git-token
     - name: IMAGE_URL
@@ -26,8 +36,8 @@ spec:
     - name: REGISTRY_SECRET_NAME
       value: ''
     - name: WAS_PORT
-      value: 8080
-    - name: SERVICE_TYPE
+      value: 3000
+    - name: WAS_SERVICE_TYPE
       value: LoadBalancer
     - name: PACKAGE_SERVER_URL
       value: ''

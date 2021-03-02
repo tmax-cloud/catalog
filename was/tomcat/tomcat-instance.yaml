@@ -1,24 +1,26 @@
 apiVersion: tmax.io/v1
 kind: TemplateInstance
 metadata:
-  name: '@@INSTANCE_NAME@@'
+  name: tomcat-cicd-template-instance
   namespace: default
   annotations:
-    template-version: '@@VERSION@@'
-    tested-operator-version: '@@OPVER@@'
+    template-version: 5.0.0
+    tested-operator-version: v0.2.0
+  labels:
+    cicd-template-was: tomcat
 spec:
   clustertemplate:
     metadata:
-      name: '@@TEMPLATE_NAME@@'
+      name: tomcat-cicd-template
     parameters:
     - name: APP_NAME
-      value: '@@PIPELINE_NAME@@'
+      value: tomcat-sample-app
     - name: GIT_TYPE
       value: gitlab
     - name: GIT_API_URL
       value: http://<깃랩URL>
     - name: GIT_REPOSITORY
-      value: '@@GIT_REPOSITORY@@'
+      value: root/TomcatMavenApp
     - name: GIT_TOKEN_SECRET
       value: cicd-example-git-token
     - name: IMAGE_URL

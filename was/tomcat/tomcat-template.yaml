@@ -1,23 +1,25 @@
 apiVersion: tmax.io/v1
 kind: ClusterTemplate
 metadata:
-  name: '@@TEMPLATE_NAME@@'
+  name: tomcat-cicd-template
   annotations:
-    template-version: '@@VERSION@@'
-    tested-operator-version: '@@OPVER@@'
-imageUrl: '@@THUMBNAIL@@'
+    template-version: 5.0.0
+    tested-operator-version: v0.2.0
+  labels:
+    cicd-template-was: tomcat
+imageUrl: https://upload.wikimedia.org/wikipedia/commons/7/7b/Tomcat-logo.svg
 provider: tmax
 recommend: false
-shortDescription: '@@SHORT_DESCRIPTION@@'
-longDescription: '@@LONG_DESCRIPTION@@'
-urlDescription: '@@URL_DESCRIPTION@@'
+shortDescription: Tomcat CI/CD Template
+longDescription: Tomcat CI/CD Template
+urlDescription: https://tomcat.apache.org/
 tags:
 - was
-- '@@TAG@@'
+- tomcat
 plans:
 - bindable: false
-  description: '@@PLAN_DESCRIPTION@@'
-  name: '@@PLAN_NAME@@'
+  description: tomcat
+  name: tomcat-plan1
 parameters:
 - name: APP_NAME
   displayName: AppName
@@ -60,7 +62,8 @@ parameters:
   required: true
 - name: PACKAGE_SERVER_URL
   displayName: PackageServerUrl
-  description: URL (including protocol, ip, port, and path) of private package server (e.g., devpi, pypi, verdaccio, ...)
+  description: URL (including protocol, ip, port, and path) of private package server
+    (e.g., devpi, pypi, verdaccio, ...)
   required: false
 - name: DEPLOY_ENV_JSON
   displayName: DeployEnvJson
@@ -85,8 +88,8 @@ objects:
     kind: ClusterRole
     name: cicd-example-role
   subjects:
-    - kind: ServiceAccount
-      name: ${APP_NAME}-config-sa
+  - kind: ServiceAccount
+    name: ${APP_NAME}-config-sa
 - apiVersion: v1
   kind: Service
   metadata:
@@ -139,17 +142,17 @@ objects:
       app: ${APP_NAME}
   spec:
     secrets:
-      - name: ${REGISTRY_SECRET_NAME}
+    - name: ${REGISTRY_SECRET_NAME}
     workspaces:
-      - name: s2i
-        volumeClaimTemplate:
-          spec:
-            storageClassName: csi-cephfs-sc
-            accessModes:
-              - ReadWriteMany
-            resources:
-              requests:
-                storage: 1Gi
+    - name: s2i
+      volumeClaimTemplate:
+        spec:
+          storageClassName: csi-cephfs-sc
+          accessModes:
+          - ReadWriteMany
+          resources:
+            requests:
+              storage: 1Gi
     git:
       type: ${GIT_TYPE}
       apiUrl: ${GIT_API_URL}
@@ -161,52 +164,52 @@ objects:
             key: token
     jobs:
       postSubmit:
-        - name: git-checkout
-          image: alpine
-          script: |
-            cp -rT `pwd` $(workspaces.s2i.path)/
-          when:
-            branch:
-              - master
-        - name: s2i
-          tektonTask:
-            taskRef:
-              local:
-                name: s2i
-                kind: ClusterTask
-            params:
-            - name: BUILDER_IMAGE
-              stringVal: '@@BUILDER_IMAGE@@'
-            - name: PACKAGE_SERVER_URL
-              stringVal: ${PACKAGE_SERVER_URL}
-            - name: IMAGE_URL
-              stringVal: ${IMAGE_URL}
-            workspaces:
-              - name: git-source
-                workspace: s2i
-          when:
-            branch:
-              - master
-          after:
-            - git-checkout
-        - name: deploy
-          skipCheckout: true
-          image: tmaxcloudck/cicd-util:5.0.0
-          imagePullPolicy: Always
-          env:
-          - name: APP_NAME
-            value: ${APP_NAME}
-          - name: CONFIGMAP_NAME
-            value: ${APP_NAME}-deploy-cfg
-          - name: DEPLOY_ENV_JSON
-            value: ${DEPLOY_ENV_JSON}
-          script: |
-            export IMAGE_URL=`cat $(workspaces.s2i.path)/image-url`
-            mkdir -p /generate
-            /cicd-util make-deployment
-            kubectl apply -f /generate/deployment.yaml
-          when:
-            branch:
-              - master
-          after:
-            - s2i
+      - name: git-checkout
+        image: alpine
+        script: |
+          cp -rT `pwd` $(workspaces.s2i.path)/
+        when:
+          branch:
+          - master
+      - name: s2i
+        tektonTask:
+          taskRef:
+            local:
+              name: s2i
+              kind: ClusterTask
+          params:
+          - name: BUILDER_IMAGE
+            stringVal: tmaxcloudck/s2i-tomcat:latest
+          - name: PACKAGE_SERVER_URL
+            stringVal: ${PACKAGE_SERVER_URL}
+          - name: IMAGE_URL
+            stringVal: ${IMAGE_URL}
+          workspaces:
+          - name: git-source
+            workspace: s2i
+        when:
+          branch:
+          - master
+        after:
+        - git-checkout
+      - name: deploy
+        skipCheckout: true
+        image: tmaxcloudck/cicd-util:5.0.0
+        imagePullPolicy: Always
+        env:
+        - name: APP_NAME
+          value: ${APP_NAME}
+        - name: CONFIGMAP_NAME
+          value: ${APP_NAME}-deploy-cfg
+        - name: DEPLOY_ENV_JSON
+          value: ${DEPLOY_ENV_JSON}
+        script: |
+          export IMAGE_URL=`cat $(workspaces.s2i.path)/image-url`
+          mkdir -p /generate
+          /cicd-util make-deployment
+          kubectl apply -f /generate/deployment.yaml
+        when:
+          branch:
+          - master
+        after:
+        - s2i
