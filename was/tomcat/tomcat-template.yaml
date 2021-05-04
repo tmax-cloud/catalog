@@ -179,7 +179,7 @@ objects:
               kind: ClusterTask
           params:
           - name: BUILDER_IMAGE
-            stringVal: tmaxcloudck/s2i-tomcat:latest
+            stringVal: docker.io/tmaxcloudck/s2i-tomcat:8.5
           - name: PACKAGE_SERVER_URL
             stringVal: ${PACKAGE_SERVER_URL}
           - name: IMAGE_URL

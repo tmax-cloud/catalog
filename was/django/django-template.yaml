@@ -179,7 +179,7 @@ objects:
               kind: ClusterTask
           params:
           - name: BUILDER_IMAGE
-            stringVal: tmaxcloudck/s2i-django:35
+            stringVal: docker.io/tmaxcloudck/s2i-django:35
           - name: PACKAGE_SERVER_URL
             stringVal: ${PACKAGE_SERVER_URL}
           - name: IMAGE_URL

@@ -30,6 +30,7 @@ spec:
   steps:
     - name: update-image-url
       image: tmaxcloudck/cicd-util:5.0.0
+      imagePullPolicy: Always
       command:
         - /cicd-util
       args:
@@ -43,6 +44,7 @@ spec:
           value: $(workspaces.git-source.path)/image-url
     - name: generate
       image: tmaxcloudck/cicd-util:5.0.0
+      imagePullPolicy: Always
       script: |
         #!/bin/sh
         set -ex
