@@ -3,8 +3,8 @@ kind: ClusterTemplate
 metadata:
   name: django-cicd-template
   annotations:
-    template-version: 5.0.0
-    tested-operator-version: v0.2.0
+    template-version: sh-pilot
+    tested-operator-version: sh-pilot
   labels:
     cicd-template-was: django
 imageUrl: https://upload.wikimedia.org/wikipedia/commons/7/75/Django_logo.svg
@@ -127,6 +127,13 @@ objects:
             containers:
             - ports:
               - containerPort: ${WAS_PORT}
+              livenessProbe:
+                exec:
+                  command:
+                  - checkfile
+                  - verify
+                initialDelaySeconds: 5
+                periodSeconds: 5
               resources:
                 requests:
                   cpu: ${DEPLOY_RESOURCE_CPU}
@@ -194,7 +201,7 @@ objects:
         - git-checkout
       - name: deploy
         skipCheckout: true
-        image: tmaxcloudck/cicd-util:5.0.0
+        image: tmaxcloudck/cicd-util:sh-pilot
         imagePullPolicy: Always
         env:
         - name: APP_NAME

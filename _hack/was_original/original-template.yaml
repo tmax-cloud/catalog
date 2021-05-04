@@ -124,6 +124,13 @@ objects:
             containers:
             - ports:
               - containerPort: ${WAS_PORT}
+              livenessProbe:
+                exec:
+                  command:
+                  - checkfile
+                  - verify
+                initialDelaySeconds: 5
+                periodSeconds: 5
               resources:
                 requests:
                   cpu: ${DEPLOY_RESOURCE_CPU}
@@ -191,7 +198,7 @@ objects:
             - git-checkout
         - name: deploy
           skipCheckout: true
-          image: tmaxcloudck/cicd-util:5.0.0
+          image: tmaxcloudck/cicd-util:sh-pilot
           imagePullPolicy: Always
           env:
           - name: APP_NAME

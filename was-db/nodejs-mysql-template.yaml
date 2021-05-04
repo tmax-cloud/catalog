@@ -3,8 +3,8 @@ kind: ClusterTemplate
 metadata:
   name: nodejs-mysql-template
   annotations:
-    template-version: 5.0.0
-    tested-operator-version: v0.2.0
+    template-version: sh-pilot
+    tested-operator-version: sh-pilot
 imageUrl: https://i.imgur.com/ImDhuQF.png
 provider: tmax
 recommend: false
@@ -329,7 +329,7 @@ objects:
                 kind: ClusterTask
             params:
               - name: BUILDER_IMAGE
-                stringVal: tmaxcloudck/s2i-nodejs:12
+                stringVal: docker.io/tmaxcloudck/s2i-nodejs:12
               - name: PACKAGE_SERVER_URL
                 stringVal: ${PACKAGE_SERVER_URL}
               - name: IMAGE_URL
@@ -344,7 +344,7 @@ objects:
             - git-checkout
         - name: deploy
           skipCheckout: true
-          image: tmaxcloudck/cicd-util:5.0.0
+          image: tmaxcloudck/cicd-util:sh-pilot
           imagePullPolicy: Always
           env:
             - name: APP_NAME

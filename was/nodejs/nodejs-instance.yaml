@@ -4,8 +4,8 @@ metadata:
   name: nodejs-cicd-template-instance
   namespace: default
   annotations:
-    template-version: 5.0.0
-    tested-operator-version: v0.2.0
+    template-version: sh-pilot
+    tested-operator-version: sh-pilot
   labels:
     cicd-template-was: nodejs
 spec:
