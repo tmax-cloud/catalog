@@ -4,7 +4,7 @@ metadata:
   name: wildfly-cicd-template
   annotations:
     template-version: sh-pilot
-    tested-operator-version: sh-pilot
+    tested-operator-version: v0.2.0
   labels:
     cicd-template-was: wildfly
 imageUrl: https://upload.wikimedia.org/wikipedia/commons/a/a3/Wildfly_logo.png
@@ -122,6 +122,7 @@ objects:
               app: ${APP_NAME}
               tier: was
           spec:
+            imagePullPolicy: Always
             imagePullSecrets:
             - name: ${REGISTRY_SECRET_NAME}
             containers:
@@ -134,6 +135,7 @@ objects:
                   - verify
                 initialDelaySeconds: 5
                 periodSeconds: 5
+                failureThreshold: 1
               resources:
                 requests:
                   cpu: ${DEPLOY_RESOURCE_CPU}

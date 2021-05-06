@@ -4,7 +4,7 @@ metadata:
   name: apache-cicd-template
   annotations:
     template-version: sh-pilot
-    tested-operator-version: sh-pilot
+    tested-operator-version: v0.2.0
   labels:
     cicd-template-was: apache
 imageUrl: https://upload.wikimedia.org/wikipedia/commons/4/45/Apache_HTTP_server_logo_%282016%29.png
@@ -122,6 +122,7 @@ objects:
               app: ${APP_NAME}
               tier: was
           spec:
+            imagePullPolicy: Always
             imagePullSecrets:
             - name: ${REGISTRY_SECRET_NAME}
             containers:
@@ -134,6 +135,7 @@ objects:
                   - verify
                 initialDelaySeconds: 5
                 periodSeconds: 5
+                failureThreshold: 1
               resources:
                 requests:
                   cpu: ${DEPLOY_RESOURCE_CPU}

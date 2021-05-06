@@ -119,6 +119,7 @@ objects:
               app: ${APP_NAME}
               tier: was
           spec:
+            imagePullPolicy: Always
             imagePullSecrets:
             - name: ${REGISTRY_SECRET_NAME}
             containers:
@@ -131,6 +132,7 @@ objects:
                   - verify
                 initialDelaySeconds: 5
                 periodSeconds: 5
+                failureThreshold: 1
               resources:
                 requests:
                   cpu: ${DEPLOY_RESOURCE_CPU}
