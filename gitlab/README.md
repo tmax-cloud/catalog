@@ -40,7 +40,7 @@ kubectl apply -f instance.yaml
 : 컨테이너 리소스 request/limit
 
 - KEYCLOAK_URL  
-: 키클록 URL (`http://` 포함)
+: 키클록 URL (`http://`또는 `https://` 포함)
 
 - KEYCLOAK_CLIENT  
 : 키클록 클라이언트 이름
