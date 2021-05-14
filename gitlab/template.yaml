@@ -71,6 +71,11 @@ parameters:
   description: Keycloak client secret
   value: ''
   required: false
+- name: KEYCLOAK_TLS_SECRET_NAME
+  displayName: Keycloak TLS Secret name
+  description: Secret name where keycloak's tls file is located
+  value: ''
+  required: false
 objects:
 - apiVersion: v1
   kind: ServiceAccount
@@ -85,6 +90,10 @@ objects:
     resources: ["services"]
     resourceNames: ["${APP_NAME}-service"]
     verbs: ["get", "list", "create", "patch", "update"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["${KEYCLOAK_TLS_SECRET_NAME}"]
+    verbs: ["list", "get"]
   - apiGroups: ["networkings", "extensions"]
     resources: ["ingresses"]
     resourceNames: ["${APP_NAME}-ingress"]
@@ -258,6 +267,9 @@ objects:
 
             # Add keycloak
             if [[ "${KEYCLOAK_URL}" != "" ]]; then
+              if [[ "${KEYCLOAK_TLS_SECRET_NAME}" != "" ]]; then
+                kubectl get secret ${KEYCLOAK_TLS_SECRET_NAME} -o jsonpath='{.data.tls\.crt}' | base64 -d > /tmp/shared/keycloak.pem
+              fi
               cat <<EOY >> /tmp/shared/omnibus.env
             gitlab_rails['omniauth_enabled'] = true
             gitlab_rails['omniauth_allow_single_sign_on'] = ['oauth2_generic']
@@ -295,6 +307,9 @@ objects:
           - -x
           - |
             export GITLAB_OMNIBUS_CONFIG="$(cat /tmp/shared/omnibus.env)"
+            echo 'export GITLAB_OMNIBUS_CONFIG="$(cat /tmp/shared/omnibus.env)"' >> /root/.bashrc
+            mkdir -p /etc/gitlab/trusted-certs
+            cp /tmp/shared/keycloak.pem /etc/gitlab/trusted-certs/keycloak.pem
             /assets/wrapper
           ports:
           - name: http
