@@ -5,7 +5,7 @@ metadata:
   namespace: default
   annotations:
     template-version: sh-pilot
-    tested-operator-version: v0.2.0
+    tested-operator-version: v0.3.2
   labels:
     cicd-template-was: django
 spec:
@@ -39,3 +39,5 @@ spec:
       value: 500m
     - name: DEPLOY_RESOURCE_MEM
       value: 500Mi
+    - name: CHECKFILE_DEST
+      value: 'http://<Logstash http-input 주소>'

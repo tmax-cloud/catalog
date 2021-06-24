@@ -3,8 +3,8 @@ kind: ClusterTemplate
 metadata:
   name: mysql-ha-template
   annotations:
-    template-version: 5.0.0
-    tested-operator-version: v0.2.0
+    template-version: sh-pilot
+    tested-operator-version: v0.3.2
 shortDescription: "MySQL HA Deployment"
 longDescription: "MySQL High Availability Deployment"
 urlDescription: https://www.mysql.com/

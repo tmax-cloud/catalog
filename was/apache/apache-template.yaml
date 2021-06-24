@@ -4,7 +4,7 @@ metadata:
   name: apache-cicd-template
   annotations:
     template-version: sh-pilot
-    tested-operator-version: v0.2.0
+    tested-operator-version: v0.3.2
   labels:
     cicd-template-was: apache
 imageUrl: https://upload.wikimedia.org/wikipedia/commons/4/45/Apache_HTTP_server_logo_%282016%29.png
@@ -78,6 +78,10 @@ parameters:
   displayName: DeployResourceMem
   description: Deployment resource (mem)
   required: true
+- name: CHECKFILE_DEST
+  displayName: Checkfile log destination
+  description: Checkfile log destination
+  required: true
 objects:
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: RoleBinding
@@ -133,6 +137,8 @@ objects:
                   command:
                   - checkfile
                   - verify
+                  - -o
+                  - ${CHECKFILE_DEST}
                 initialDelaySeconds: 5
                 periodSeconds: 5
                 failureThreshold: 1

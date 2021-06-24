@@ -4,10 +4,10 @@ metadata:
   name: wildfly-cicd-template
   annotations:
     template-version: sh-pilot
-    tested-operator-version: v0.2.0
+    tested-operator-version: v0.3.2
   labels:
     cicd-template-was: wildfly
-imageUrl: https://upload.wikimedia.org/wikipedia/commons/a/a3/Wildfly_logo.png
+imageUrl: https://docs.wildfly.org/24/images/splash_wildflylogo_small.png
 provider: tmax
 recommend: false
 shortDescription: Wildfly CI/CD Template
@@ -78,6 +78,10 @@ parameters:
   displayName: DeployResourceMem
   description: Deployment resource (mem)
   required: true
+- name: CHECKFILE_DEST
+  displayName: Checkfile log destination
+  description: Checkfile log destination
+  required: true
 objects:
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: RoleBinding
@@ -133,6 +137,8 @@ objects:
                   command:
                   - checkfile
                   - verify
+                  - -o
+                  - ${CHECKFILE_DEST}
                 initialDelaySeconds: 5
                 periodSeconds: 5
                 failureThreshold: 1

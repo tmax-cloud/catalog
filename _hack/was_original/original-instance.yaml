@@ -37,3 +37,5 @@ spec:
       value: 500m
     - name: DEPLOY_RESOURCE_MEM
       value: 500Mi
+    - name: CHECKFILE_DEST
+      value: 'http://<Logstash http-input 주소>'

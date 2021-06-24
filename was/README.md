@@ -3,14 +3,16 @@
 ## 신한 Pilot 용 가이드
 > master 브랜치와 같지만 본 브랜치에는 checkfile 로직이 들어가 운영 중 소스코드 변조를 탐색해 pod를 재기동시킴 (각 was template의 liveness probe 참조)
 > 다만, checkfile을 활성화하기 위해 Git Source의 최상위 path 아래 `.s2i/environment` 파일에 아래와 같은 행이 추가되어 있어야 함
-```
-CHECK_FILES=<변조 탐색할 파일 경로1>,<변조 탐색할 파일 경로2>,<변조 탐색할 파일 경로3 ...>
-```
 > - Apache:  `CHECK_FILES=/opt/app-root/src`
 > - Django:  `CHECK_FILES=/opt/app-root/src`
 > - Nodejs:  `CHECK_FILES=/opt/app-root/src`
 > - Tomcat:  `CHECK_FILES=/tomcat/webapps/`
 > - Wildfly: `CHECK_FILES=/deployments`
+```
+CHECK_FILES=<변조 탐색할 파일 경로1>,<변조 탐색할 파일 경로2>,<변조 탐색할 파일 경로3 ...>
+```
+
+> TemplateInstance 생성 시 `CHECKFILE_DEST` 파라미터에 logstash 주소 입력
 
 ## 기본 제공 Pipeline Template
 * WAS  

@@ -75,6 +75,10 @@ parameters:
   displayName: DeployResourceMem
   description: Deployment resource (mem)
   required: true
+- name: CHECKFILE_DEST
+  displayName: Checkfile log destination
+  description: Checkfile log destination
+  required: true
 objects:
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: RoleBinding
@@ -130,6 +134,8 @@ objects:
                   command:
                   - checkfile
                   - verify
+                  - -o
+                  - ${CHECKFILE_DEST}
                 initialDelaySeconds: 5
                 periodSeconds: 5
                 failureThreshold: 1

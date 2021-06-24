@@ -4,7 +4,7 @@ metadata:
   name: nodejs-mysql-template
   annotations:
     template-version: sh-pilot
-    tested-operator-version: sh-pilot
+    tested-operator-version: v0.3.2
 imageUrl: https://i.imgur.com/ImDhuQF.png
 provider: tmax
 recommend: false

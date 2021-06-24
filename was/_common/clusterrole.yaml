@@ -4,7 +4,7 @@ metadata:
   name: cicd-example-role
   annotations:
     template-version: sh-pilot
-    tested-operator-version: v0.2.0
+    tested-operator-version: v0.3.2
 rules:
 - apiGroups:
   - apps

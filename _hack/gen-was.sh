@@ -50,14 +50,14 @@ elif [ "$1" == "wildfly" ]; then
 	BUILDER_IMAGE="docker.io/tmaxcloudck/s2i-wildfly:18"
 	GIT_REPOSITORY="root/TomcatMavenApp"
 	#GIT_URL="https://github.com/sunghyunkim3/TomcatMavenApp"
-	THUMBNAIL="https://upload.wikimedia.org/wikipedia/commons/a/a3/Wildfly_logo.png"
+	THUMBNAIL="https://docs.wildfly.org/24/images/splash_wildflylogo_small.png"
 	URL_DESCRIPTION="https://www.wildfly.org/"
 elif [ "$1" == "tomcat" ]; then
 	DISPLAY_NAME="Tomcat"
 	BUILDER_IMAGE="docker.io/tmaxcloudck/s2i-tomcat:8.5"
 	GIT_REPOSITORY="root/TomcatMavenApp"
 	#GIT_URL="https://github.com/sunghyunkim3/TomcatMavenApp"
-	THUMBNAIL="https://upload.wikimedia.org/wikipedia/commons/7/7b/Tomcat-logo.svg"
+	THUMBNAIL="http://tomcat.apache.org/res/images/tomcat.png"
 	URL_DESCRIPTION="https://tomcat.apache.org/"
 else
 	echo "No known target $1"
