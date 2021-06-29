@@ -50,6 +50,7 @@ CHECK_FILES=<변조 탐색할 파일 경로1>,<변조 탐색할 파일 경로2>,
     * `DEPLOY_ENV_JSON`: WAS Deployment에 추가될 추가 환경 변수
     * `DEPLOY_RESOURCE_CPU`: WAS Deployment 리소스 CPU
     * `DEPLOY_RESOURCE_CPU`: WAS Deployment 리소스 RAM
+    * `CHECKFILE_DEST`: Checkfile 로그 남겨질 경로 (파일 or HTTP)
 
 ### CI/CD Pipeline 구성
 1. S2I(Source-to-Image) Task
@@ -148,6 +149,8 @@ spec:
         value: 500m
       - name: DEPLOY_RESOURCE_MEM
         value: 500Mi
+      - name: CHECKFILE_DEST
+        value: http://logstash.url:8080 # Or, /var/log/checkfile.log, ...
 
 ```
 
