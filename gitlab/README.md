@@ -17,8 +17,15 @@ kubectl apply -f instance.yaml
 - STORAGE  
 : GitLab용 PersistentVolumeClaim 크기
 
+- STORAGE_CLASS  
+: GitLab용 PVC의 Storage Class (default: csi-cephfs-sc)
+
 - SERVICE_TYPE  
 : GitLab용 서비스 종류 (ClsuterIP/NodePort/LoadBalancer/Ingress)
+
+- EXTERNAL_URL  
+: SERVICE_TYPE으로 정의된 기본 엔드포인트와 다른 엔드포인트를 사용하고 싶을 때 해당 엔드포인트 명시 (http:// 포함)  
+(e.g., LoadBalancer로 생성 후 및 LoadBalancer IP에 도메인 등록 후 도메인으로 접속하고 싶은 경우)
 
 - WEB_NODE_IP
 : SERVICE_TYPE에 NodePort를 사용하는 경우, 깃랩 접속에 사용할 IP 명시.

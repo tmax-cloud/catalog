@@ -23,10 +23,20 @@ parameters:
   displayName: Storage
   description: Storage size
   required: true
+- name: STORAGE_CLASS
+  displayName: StorageClass
+  description: Storage class name
+  value: csi-cephfs-sc
+  required: true
 - name: SERVICE_TYPE
   displayName: ServiceType
   description: Service Type (ClsuterIP/NodePort/LoadBalancer/Ingress)
   required: true
+- name: EXTERNAL_URL
+  displayName: ExternalURL
+  description: External URL, if it's different from the default endpoint of SERVICE_TYPE
+  required: false
+  value: ''
 - name: WEB_NODE_IP
   displayName: WebNodeIP
   description: (Only for NodePort type) Web NodeIP
@@ -148,7 +158,7 @@ objects:
     labels:
       app: ${APP_NAME}
   spec:
-    storageClassName: csi-cephfs-sc
+    storageClassName: ${STORAGE_CLASS}
     accessModes:
     - ReadWriteMany
     resources:
@@ -254,6 +264,11 @@ objects:
                 kubectl patch ingress ${APP_NAME}-ingress --type=json -p '[{"op": "replace", "path": "/spec/rules/0/host", "value": "'$ING_HOST'"}]'
             else
                 echo "Something's wrong"
+            fi
+
+            # Override external url
+            if [[ "${EXTERNAL_URL}" != "" ]]; then
+                EXTERNAL_IP="${EXTERNAL_URL}"
             fi
 
             cat <<EOT >> /tmp/shared/omnibus.env
