@@ -3,7 +3,7 @@ kind: ClusterTemplate
 metadata:
   name: mariadb-template
   annotations:
-    template-version: 5.0.0
+    template-version: 5.0.2
     tested-operator-version: v0.2.0
 shortDescription: MariaDB Deployment
 longDescription: MariaDB Deployment

@@ -3,7 +3,7 @@ kind: ClusterTemplate
 metadata:
   name: wildfly-cicd-template
   annotations:
-    template-version: 5.0.0
+    template-version: 5.0.2
     tested-operator-version: v0.2.0
   labels:
     cicd-template-was: wildfly
@@ -194,7 +194,7 @@ objects:
         - git-checkout
       - name: deploy
         skipCheckout: true
-        image: tmaxcloudck/cicd-util:5.0.0
+        image: tmaxcloudck/cicd-util:5.0.2
         imagePullPolicy: Always
         env:
         - name: APP_NAME

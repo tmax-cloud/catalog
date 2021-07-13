@@ -3,7 +3,7 @@ kind: ClusterTemplate
 metadata:
   name: devpi-package-server
   annotations:
-    template-version: 5.0.0
+    template-version: 5.0.2
     tested-operator-version: v0.2.0
 imageUrl: https://devpi.net/docs/devpi/devpi/stable/+doc/_static/logo.svg
 provider: tmax
