@@ -25,6 +25,11 @@ parameters:
   displayName: StorageSize
   description: Size of a storage (e.g., 100Mi, 10Gi, ...)
   required: true
+- name: STORAGE_CLASS
+  displayName: StorageClass
+  description: Storage class
+  value: csi-cephfs-sc
+  required: true
 plans:
 - bindable: false
   description: Nexus package server
@@ -50,7 +55,7 @@ objects:
     labels:
       app: ${DEPLOY_NAME}
   spec:
-    storageClassName: csi-cephfs-sc
+    storageClassName: ${STORAGE_CLASS}
     accessModes:
     - ReadWriteOnce
     resources:

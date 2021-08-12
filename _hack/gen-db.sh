@@ -50,7 +50,7 @@ elif [ "$1" == "mysql" ]; then
 	READINESS=("/bin/bash" "-c" "MYSQL_PWD=\"\$MYSQL_PASSWORD\" mysql -h 127.0.0.1 -u \$MYSQL_USER -D \$MYSQL_DATABASE -e 'SELECT 1'")
 elif [ "$1" == "mariadb" ]; then
 	DISPLAY_NAME="MariaDB"
-	IMAGE="centos/mariadb-102-centos7:latest"
+	IMAGE="docker.io/centos/mariadb-102-centos7:20200917-ddddffb"
 	PORT=3306
 	STORAGE="/var/lib/mysql/data"
 	THUMBNAIL="https://upload.wikimedia.org/wikipedia/commons/c/c9/MariaDB_Logo.png"
@@ -73,7 +73,7 @@ elif [ "$1" == "mariadb" ]; then
 	READINESS=("/bin/bash" "-c" "MYSQL_PWD=\"\$MYSQL_PASSWORD\" mysql -h 127.0.0.1 -u \$MYSQL_USER -D \$MYSQL_DATABASE -e 'SELECT 1'")
 elif [ "$1" == "postgresql" ]; then
 	DISPLAY_NAME="PostgreSQL"
-	IMAGE="centos/postgresql-96-centos7:latest"
+	IMAGE="docker.io/centos/postgresql-96-centos7:20200917-804ef01"
 	PORT=5432
 	STORAGE="/var/lib/pgsql/data"
 	THUMBNAIL="https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg"
@@ -96,7 +96,7 @@ elif [ "$1" == "postgresql" ]; then
 	READINESS=("/usr/libexec/check-container")
 elif [ "$1" == "mongodb" ]; then
 	DISPLAY_NAME="MongoDB"
-	IMAGE="centos/mongodb-26-centos7:latest"
+	IMAGE="docker.io/centos/mongodb-26-centos7:2.6"
 	PORT=27017
 	STORAGE="/var/lib/mongodb/data"
 	THUMBNAIL="https://upload.wikimedia.org/wikipedia/en/4/45/MongoDB-Logo.svg"
@@ -124,7 +124,7 @@ elif [ "$1" == "mongodb" ]; then
 	READINESS=("/bin/bash" "-c" "mongo 127.0.0.1:27017/\$MONGODB_DATABASE -u \$MONGODB_USER -p \$MONGODB_PASSWORD --eval=\"quit()\"")
 elif [ "$1" == "redis" ]; then
 	DISPLAY_NAME="Redis"
-	IMAGE="centos/redis-32-centos7:latest"
+	IMAGE="docker.io/centos/redis-32-centos7:20191001-3e6f34e"
 	PORT=6379
 	STORAGE="/var/lib/redis/data"
 	THUMBNAIL="https://upload.wikimedia.org/wikipedia/en/6/6b/Redis_Logo.svg"
@@ -186,7 +186,7 @@ if [ "$READINESS" != "" ]; then
 	done
 fi
 
-I=3
+I=4
 declare -n e
 for e in ${!env@}; do
 	yq w -i "$TARGET_DIR/$TEMPLATE_FILE" "parameters[+].name" "${e[name]}"
@@ -217,7 +217,7 @@ done
 yq w "$scriptDir/db_original/original-instance.yaml" 'metadata.name' "$INSTANCE_NAME" | \
 yq w - 'spec.clustertemplate.metadata.name' "$TEMPLATE_NAME" | \
 yq w - 'spec.clustertemplate.parameters[0].value' "$APP_NAME" > "$TARGET_DIR/$INSTANCE_FILE"
-I=3
+I=4
 declare -n e
 for e in ${!env@}; do
 	yq w -i "$TARGET_DIR/$INSTANCE_FILE" "spec.clustertemplate.parameters[+].name" "${e[name]}"

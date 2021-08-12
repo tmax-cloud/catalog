@@ -4,7 +4,7 @@ Private package server는 클러스터 내부에 배포되는 패키지 서버�
 현재는 아래의 언어/패키지 서버를 지원함.
 * Python - Pypi
 * Pyton - devpi  
-: pypi.org 자동 미러링 가능, `tmaxcloudck/devpi:latest` 이미지 필요
+: pypi.org 자동 미러링 가능, `tmaxcloudck/devpi:5.5.0` 이미지 필요
 * Node.js - Verdaccio  
 : npmjs.org 자동 미러링 가능
 * Java(maven) - Archiva  

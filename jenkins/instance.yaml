@@ -15,5 +15,7 @@ spec:
       value: jenkins-test-deploy
     - name: STORAGE
       value: 10Gi
+    - name: STORAGE_CLASS
+      value: csi-cephfs-sc
     - name: SERVICE_TYPE
       value: LoadBalancer

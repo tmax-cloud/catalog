@@ -11,5 +11,7 @@ spec:
       value: vscode-test-deploy
     - name: STORAGE
       value: 30Gi
+    - name: STORAGE_CLASS
+      value: csi-cephfs-sc
     - name: SERVICE_TYPE
       value: LoadBalancer

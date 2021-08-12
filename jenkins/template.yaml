@@ -36,7 +36,7 @@ objects:
     labels:
       app: ${APP_NAME}
   spec:
-    storageClassName: csi-cephfs-sc
+    storageClassName: ${STORAGE_CLASS}
     accessModes:
     - ReadWriteMany
     resources:
@@ -82,6 +82,11 @@ parameters:
 - name: STORAGE
   displayName: Storage
   description: Storage size
+  required: true
+- name: STORAGE_CLASS
+  displayName: StorageClass
+  description: Storage class
+  value: csi-cephfs-sc
   required: true
 - name: SERVICE_TYPE
   displayName: ServiceType

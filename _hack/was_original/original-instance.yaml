@@ -25,6 +25,8 @@ spec:
       value: '<이미지 주소>'
     - name: REGISTRY_SECRET_NAME
       value: ''
+    - name: STORAGE_CLASS
+      value: csi-cephfs-sc
     - name: WAS_PORT
       value: 8080
     - name: SERVICE_TYPE

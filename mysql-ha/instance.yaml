@@ -15,4 +15,6 @@ spec:
       value: mysql-ha-test-deploy
     - name: REPLICA
       value: 4
+    - name: STORAGE_CLASS
+      value: csi-cephfs-sc
 

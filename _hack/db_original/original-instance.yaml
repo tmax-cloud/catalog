@@ -15,5 +15,7 @@ spec:
       value: '@@APP_NAME@@'
     - name: DB_STORAGE
       value: "10Gi"
+    - name: STORAGE_CLASS
+      value: csi-cephfs-sc
     - name: SERVICE_TYPE
       value: ClusterIP

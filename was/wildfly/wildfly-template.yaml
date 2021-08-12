@@ -51,6 +51,11 @@ parameters:
   description: Secret for accessing image registry
   required: false
   value: ''
+- name: STORAGE_CLASS
+  displayName: StorageClass
+  description: Storage class for ci workspace
+  required: true
+  value: csi-cephfs-sc
 - name: WAS_PORT
   displayName: wasPort
   description: WAS Port
@@ -147,7 +152,7 @@ objects:
     - name: s2i
       volumeClaimTemplate:
         spec:
-          storageClassName: csi-cephfs-sc
+          storageClassName: ${STORAGE_CLASS}
           accessModes:
           - ReadWriteMany
           resources:

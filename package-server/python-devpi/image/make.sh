@@ -2,7 +2,7 @@
 
 set -ex
 
-TAG=devpi:latest
+TAG=devpi:5.5.0
 REGISTRY=tmaxcloudck
 
 TAG_REMOTE="$REGISTRY/$TAG"

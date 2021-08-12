@@ -19,6 +19,11 @@ parameters:
     displayName: Storage
     description: Storage size
     required: true
+  - name: STORAGE_CLASS
+    displayName: StorageClass
+    description: Storage class
+    value: csi-cephfs-sc
+    required: true
   - name: SERVICE_TYPE
     displayName: ServiceType
     description: Service Type (ClusterIP/NodePort/LoadBalancer)
@@ -44,7 +49,7 @@ objects:
     labels:
       app: ${APP_NAME}
   spec:
-    storageClassName: csi-cephfs-sc
+    storageClassName: ${STORAGE_CLASS}
     accessModes:
     - ReadWriteMany
     resources:
@@ -69,7 +74,7 @@ objects:
       spec:
         containers:
         - name: ${APP_NAME}
-          image: codercom/code-server:latest
+          image: docker.io/codercom/code-server:3.11.1
           ports:
           - name: http
             containerPort: 8080
