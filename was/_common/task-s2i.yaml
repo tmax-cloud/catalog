@@ -3,8 +3,8 @@ kind: ClusterTask
 metadata:
   name: s2i
   annotations:
-    template-version: 5.0.2
-    tested-operator-version: v0.2.0
+    template-version: 5.0.3
+    tested-operator-version: 1.1.0
 spec:
   description: S2I Task
   params:
@@ -29,7 +29,7 @@ spec:
       description: Git source directory
   steps:
     - name: update-image-url
-      image: tmaxcloudck/cicd-util:5.0.2
+      image: tmaxcloudck/cicd-util:5.0.3
       imagePullPolicy: Always
       command:
         - /cicd-util
@@ -43,7 +43,7 @@ spec:
         - name: TARGET_FILE
           value: $(workspaces.git-source.path)/image-url
     - name: generate
-      image: tmaxcloudck/cicd-util:5.0.2
+      image: tmaxcloudck/cicd-util:5.0.3
       imagePullPolicy: Always
       script: |
         #!/bin/sh

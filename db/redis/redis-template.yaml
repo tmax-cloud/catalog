@@ -3,8 +3,8 @@ kind: ClusterTemplate
 metadata:
   name: redis-template
   annotations:
-    template-version: 5.0.2
-    tested-operator-version: v0.2.0
+    template-version: 5.0.3
+    tested-operator-version: 1.1.0
 shortDescription: Redis Deployment
 longDescription: Redis Deployment
 urlDescription: https://redis.io/

@@ -3,8 +3,8 @@ kind: ClusterTemplate
 metadata:
   name: nexus-package-server
   annotations:
-    template-version: 5.0.2
-    tested-operator-version: v0.2.0
+    template-version: 5.0.3
+    tested-operator-version: 1.1.0
 imageUrl: https://avatars0.githubusercontent.com/u/44938?s=200&v=4
 provider: tmax
 recommend: false

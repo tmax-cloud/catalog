@@ -4,8 +4,8 @@ metadata:
   name: pypi-package-server-instance
   namespace: default
   annotations:
-    template-version: 5.0.2
-    tested-operator-version: v0.2.0
+    template-version: 5.0.3
+    tested-operator-version: 1.1.0
 spec:
   clustertemplate:
     metadata:
