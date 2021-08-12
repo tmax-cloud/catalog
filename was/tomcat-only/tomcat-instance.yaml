@@ -1,0 +1,23 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: tomcat-only-template-instance
+  namespace: default
+  annotations:
+    template-version: 5.0.2
+    tested-operator-version: v0.2.0
+  labels:
+    template-was: tomcat-only
+spec:
+  clustertemplate:
+    metadata:
+      name: tomcat-only-template
+    parameters:
+    - name: APP_NAME
+      value: tomcat-only-sample-app
+    - name: SERVICE_TYPE
+      value: LoadBalancer
+    - name: RESOURCE_CPU
+      value: 500m
+    - name: RESOURCE_MEM
+      value: 500Mi

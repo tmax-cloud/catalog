@@ -21,7 +21,7 @@ kubectl apply -f instance.yaml
 : GitLab용 PVC의 Storage Class (default: csi-cephfs-sc)
 
 - SERVICE_TYPE  
-: GitLab용 서비스 종류 (ClsuterIP/NodePort/LoadBalancer/Ingress)
+: GitLab용 서비스 종류 (ClusterIP/NodePort/LoadBalancer/Ingress)
 
 - EXTERNAL_URL  
 : SERVICE_TYPE으로 정의된 기본 엔드포인트와 다른 엔드포인트를 사용하고 싶을 때 해당 엔드포인트 명시 (http:// 포함)  

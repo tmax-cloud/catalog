@@ -117,7 +117,7 @@ parameters:
   required: true
 - name: SERVICE_TYPE
   displayName: ServiceType
-  description: Service Type (ClsuterIP/NodePort/LoadBalancer)
+  description: Service Type (ClusterIP/NodePort/LoadBalancer)
   required: true
 - name: MYSQL_USER
   displayName: MysqlUser

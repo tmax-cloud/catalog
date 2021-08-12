@@ -30,7 +30,7 @@ parameters:
   required: true
 - name: SERVICE_TYPE
   displayName: ServiceType
-  description: Service Type (ClsuterIP/NodePort/LoadBalancer/Ingress)
+  description: Service Type (ClusterIP/NodePort/LoadBalancer/Ingress)
   required: true
 - name: EXTERNAL_URL
   displayName: ExternalURL

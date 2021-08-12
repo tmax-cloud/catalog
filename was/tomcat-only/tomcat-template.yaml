@@ -1,0 +1,74 @@
+apiVersion: tmax.io/v1
+kind: ClusterTemplate
+metadata:
+  name: tomcat-only-template
+  annotations:
+    template-version: 5.0.2
+    tested-operator-version: v0.2.0
+  labels:
+    template-was: tomcat-only
+imageUrl: https://upload.wikimedia.org/wikipedia/commons/7/7b/Tomcat-logo.svg
+provider: tmax
+recommend: false
+shortDescription: Tomcat Template
+longDescription: Tomcat Template
+urlDescription: https://tomcat.apache.org/
+tags:
+- was
+- tomcat-only
+plans:
+- bindable: false
+  description: tomcat-only
+  name: tomcat-plan1
+parameters:
+- name: APP_NAME
+  displayName: AppName
+  description: Application name
+  required: true
+- name: SERVICE_TYPE
+  displayName: ServiceType
+  description: Service Type (ClusterIP/NodePort/LoadBalancer)
+  required: true
+- name: RESOURCE_CPU
+  displayName: DeployResourceCpu
+  description: Deployment resource (cpu)
+  required: true
+- name: RESOURCE_MEM
+  displayName: DeployResourceMem
+  description: Deployment resource (mem)
+  required: true
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APP_NAME}-service
+    labels:
+      app: ${APP_NAME}
+  spec:
+    type: ${SERVICE_TYPE}
+    ports:
+    - port: 8080
+    selector:
+      app: ${APP_NAME}
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: ${APP_NAME}
+    labels:
+      app: ${APP_NAME}
+  spec:
+    selector:
+      matchLabels:
+        app: ${APP_NAME}
+    template:
+      metadata:
+        labels:
+          app: ${APP_NAME}
+      spec:
+        containers:
+          - name: tomcat
+            image: tomcat:8.5.69-jdk8-openjdk-slim
+            resources:
+              requests:
+                cpu: ${RESOURCE_CPU}
+                memory: ${RESOURCE_MEM}

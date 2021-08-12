@@ -52,7 +52,7 @@ parameters:
   required: true
 - name: DB_SERVICE_TYPE
   displayName: DbServiceType
-  description: DB Service Type (ClsuterIP/NodePort/LoadBalancer)
+  description: DB Service Type (ClusterIP/NodePort/LoadBalancer)
   required: true
 - name: GIT_TYPE
   displayName: GitType
@@ -329,7 +329,7 @@ objects:
                 kind: ClusterTask
             params:
               - name: BUILDER_IMAGE
-                stringVal: tmaxcloudck/s2i-nodejs:12
+                stringVal: docker.io/tmaxcloudck/s2i-nodejs:12
               - name: PACKAGE_SERVER_URL
                 stringVal: ${PACKAGE_SERVER_URL}
               - name: IMAGE_URL

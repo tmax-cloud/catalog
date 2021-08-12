@@ -42,7 +42,7 @@ spec:
     - name: PACKAGE_SERVER_URL
       value: ''
     - name: DEPLOY_ENV_JSON
-      value: "{'EX':'EXVAL', 'EX2': 'EXVAL2'}"
+      value: "{'EX':'EXVAL', 'EX2':'EXVAL2'}"
     - name: DEPLOY_RESOURCE_CPU
       value: 500m
     - name: DEPLOY_RESOURCE_MEM
