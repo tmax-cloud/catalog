@@ -13,7 +13,7 @@ recommend: false
 shortDescription: Tomcat CI/CD Template
 longDescription: Tomcat CI/CD Template
 urlDescription: https://tomcat.apache.org/
-tags:
+categories:
 - was
 - tomcat
 plans:

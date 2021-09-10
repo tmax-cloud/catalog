@@ -11,7 +11,7 @@ recommend: false
 shortDescription: Archiva package server for Java Maven
 longDescription: Archiva package server for Java Maven
 urlDescription: https://archiva.apache.org/
-tags:
+categories:
 - archiva
 - package-server
 - java

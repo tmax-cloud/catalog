@@ -10,7 +10,7 @@ longDescription: MongoDB Deployment
 urlDescription: https://www.mongodb.com/
 imageUrl: https://upload.wikimedia.org/wikipedia/en/4/45/MongoDB-Logo.svg
 provider: tmax
-tags:
+categories:
 - db
 - mongodb
 objects:

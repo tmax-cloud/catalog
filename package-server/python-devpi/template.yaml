@@ -11,7 +11,7 @@ recommend: false
 shortDescription: Devpi package server for python pip
 longDescription: Devpi package server for python pip
 urlDescription: https://github.com/devpi/devpi
-tags:
+categories:
 - devpi
 - package-server
 - python

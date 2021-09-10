@@ -11,7 +11,7 @@ recommend: false
 shortDescription: Nexus package server for Java Maven
 longDescription: Nexus package server for Java Maven
 urlDescription: https://www.sonatype.com/product-nexus-repository
-tags:
+categories:
 - nexus
 - package-server
 - java

@@ -10,7 +10,7 @@ longDescription: "MySQL High Availability Deployment"
 urlDescription: https://www.mysql.com/
 imageUrl: "https://upload.wikimedia.org/wikipedia/en/6/62/MySQL.svg"
 provider: tmax
-tags:
+categories:
 - mysql
 - db
 - ha
