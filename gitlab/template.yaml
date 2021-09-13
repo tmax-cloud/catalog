@@ -52,6 +52,7 @@ parameters:
   displayName: IngressHost
   description: (Only for Ingress type) Ingress hostname
   required: false
+  value: ''
 - name: SSH_PORT
   displayName: SshPort
   description: SSH port for git clone/pull/push
