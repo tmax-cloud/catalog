@@ -11,7 +11,7 @@ recommend: false
 shortDescription: '@@SHORT_DESCRIPTION@@'
 longDescription: '@@LONG_DESCRIPTION@@'
 urlDescription: '@@URL_DESCRIPTION@@'
-tags:
+categories:
 - was
 - '@@TAG@@'
 plans:

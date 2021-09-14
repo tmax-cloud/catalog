@@ -74,7 +74,7 @@ yq w - 'imageUrl' "$THUMBNAIL" | \
 yq w - 'shortDescription' "$DISPLAY_NAME CI/CD Template" | \
 yq w - 'longDescription' "$DISPLAY_NAME CI/CD Template" | \
 yq w - 'urlDescription' "$URL_DESCRIPTION" | \
-yq w - 'tags[1]' "$1" | \
+yq w - 'categories[1]' "$1" | \
 yq w - 'plans[0].description' "$1" | \
 yq w - 'plans[0].name' "$1-plan1"> "$TARGET_DIR/$TEMPLATE_FILE"
 

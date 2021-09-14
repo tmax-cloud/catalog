@@ -151,7 +151,7 @@ yq w - 'shortDescription' "$DISPLAY_NAME Deployment" | \
 yq w - 'longDescription' "$DISPLAY_NAME Deployment" | \
 yq w - 'urlDescription' "$URL_DESCRIPTION" | \
 yq w - 'imageUrl' "$THUMBNAIL" | \
-yq w - 'tags[1]' "$1" | \
+yq w - 'categories[1]' "$1" | \
 yq w - 'objects[0].spec.ports[0].port' "$PORT" | \
 yq w - 'objects[0].spec.selector.tier' "$1" > "$TARGET_DIR/$TEMPLATE_FILE"
 declare -n e
