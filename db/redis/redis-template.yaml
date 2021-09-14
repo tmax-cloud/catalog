@@ -10,7 +10,7 @@ longDescription: Redis Deployment
 urlDescription: https://redis.io/
 imageUrl: https://upload.wikimedia.org/wikipedia/en/6/6b/Redis_Logo.svg
 provider: tmax
-tags:
+categories:
 - db
 - redis
 objects:

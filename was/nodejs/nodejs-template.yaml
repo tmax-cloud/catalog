@@ -13,7 +13,7 @@ recommend: false
 shortDescription: NodeJS CI/CD Template
 longDescription: NodeJS CI/CD Template
 urlDescription: https://nodejs.org/ko/
-tags:
+categories:
 - was
 - nodejs
 plans:

@@ -10,7 +10,7 @@ longDescription: PostgreSQL Deployment
 urlDescription: https://www.postgresql.org/
 imageUrl: https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg
 provider: tmax
-tags:
+categories:
 - db
 - postgresql
 objects:

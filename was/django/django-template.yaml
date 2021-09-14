@@ -13,7 +13,7 @@ recommend: false
 shortDescription: Django CI/CD Template
 longDescription: Django CI/CD Template
 urlDescription: https://www.djangoproject.com/
-tags:
+categories:
 - was
 - django
 plans:

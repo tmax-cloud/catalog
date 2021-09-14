@@ -13,7 +13,7 @@ recommend: false
 shortDescription: Apache CI/CD Template
 longDescription: Apache CI/CD Template
 urlDescription: https://httpd.apache.org/
-tags:
+categories:
 - was
 - apache
 plans:

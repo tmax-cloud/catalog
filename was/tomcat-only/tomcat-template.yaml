@@ -13,7 +13,7 @@ recommend: false
 shortDescription: Tomcat Template
 longDescription: Tomcat Template
 urlDescription: https://tomcat.apache.org/
-tags:
+categories:
 - was
 - tomcat-only
 plans:

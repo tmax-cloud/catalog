@@ -11,7 +11,7 @@ recommend: false
 shortDescription: NodeJS & MySQL Template
 longDescription: NodeJS & MySQL Template
 urlDescription: https://nodejs.org/ko/
-tags:
+categories:
 - was
 - nodejs
 - db

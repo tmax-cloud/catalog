@@ -10,7 +10,7 @@ longDescription: MariaDB Deployment
 urlDescription: https://mariadb.org/
 imageUrl: https://upload.wikimedia.org/wikipedia/commons/c/c9/MariaDB_Logo.png
 provider: tmax
-tags:
+categories:
 - db
 - mariadb
 objects:

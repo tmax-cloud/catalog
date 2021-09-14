@@ -13,7 +13,7 @@ recommend: false
 shortDescription: Wildfly CI/CD Template
 longDescription: Wildfly CI/CD Template
 urlDescription: https://www.wildfly.org/
-tags:
+categories:
 - was
 - wildfly
 plans:

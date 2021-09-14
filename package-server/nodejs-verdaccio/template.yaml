@@ -11,7 +11,7 @@ recommend: false
 shortDescription: Verdaccio package server for Node.js NPM
 longDescription: Verdaccio package server for Node.js NPM
 urlDescription: https://verdaccio.org/
-tags:
+categories:
 - verdaccio
 - package-server
 - nodejs

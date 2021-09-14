@@ -10,7 +10,7 @@ longDescription: "Jenkins Deployment"
 urlDescription: https://www.jenkins.io/
 imageUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e3/Jenkins_logo_with_title.svg"
 provider: tmax
-tags:
+categories:
 - jenkins
 - cicd
 objects:

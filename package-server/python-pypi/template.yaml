@@ -11,7 +11,7 @@ recommend: false
 shortDescription: Pypi package server for python pip
 longDescription: Pypi package server for python pip
 urlDescription: https://github.com/pypiserver/pypiserver
-tags:
+categories:
 - pypi
 - package-server
 - python
