@@ -10,7 +10,7 @@ longDescription: '@@LONG_DESCRIPTION@@'
 urlDescription: '@@URL_DESCRIPTION@@'
 imageUrl: '@@THUMBNAIL@@'
 provider: tmax
-tags:
+categories:
 - db
 - '@@TAG@@'
 objects:
