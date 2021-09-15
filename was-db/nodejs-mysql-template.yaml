@@ -193,7 +193,7 @@ objects:
       spec:
         initContainers:
         - name: init-privilege-${MYSQL_USER}
-          image: busybox
+          image: docker.io/busybox:1.33.1
           command:
           - sh
           - -c
@@ -202,7 +202,7 @@ objects:
           - name: mysql-init-cfg
             mountPath: /opt/app-root/src/mysql-init
         containers:
-        - image: centos/mysql-57-centos7:5.7
+        - image: docker.io/centos/mysql-57-centos7:5.7
           name: mysql
           env:
           - name: MYSQL_USER
@@ -320,7 +320,7 @@ objects:
     jobs:
       postSubmit:
         - name: git-checkout
-          image: alpine
+          image: docker.io/alpine:3.13.6
           script: |
             cp -rT `pwd` $(workspaces.s2i.path)/
           when:
@@ -349,7 +349,7 @@ objects:
             - git-checkout
         - name: deploy
           skipCheckout: true
-          image: tmaxcloudck/cicd-util:5.0.3
+          image: docker.io/tmaxcloudck/cicd-util:5.0.3
           imagePullPolicy: Always
           env:
             - name: APP_NAME

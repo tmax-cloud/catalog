@@ -27,7 +27,7 @@ if [ "$1" == "all" ]; then
 # Param setting for each DB
 elif [ "$1" == "mysql" ]; then
 	DISPLAY_NAME="MySQL"
-	IMAGE="centos/mysql-57-centos7:5.7"
+	IMAGE="docker.io/centos/mysql-57-centos7:5.7"
 	PORT=3306
 	STORAGE="/var/lib/mysql/data"
 	THUMBNAIL="https://upload.wikimedia.org/wikipedia/en/6/62/MySQL.svg"

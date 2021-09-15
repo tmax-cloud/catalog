@@ -78,7 +78,7 @@ objects:
       spec:
         containers:
         - name: archiva
-          image: xetusoss/archiva
+          image: docker.io/xetusoss/archiva:v2.2.5
           ports:
           - containerPort: 8080
           volumeMounts:

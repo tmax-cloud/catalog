@@ -185,7 +185,7 @@ objects:
         serviceAccountName: ${APP_NAME}-account
         initContainers:
         - name: parse-svc
-          image: bitnami/kubectl
+          image: docker.io/bitnami/kubectl:1.20.10
           env:
           - name: NODE_IP
             valueFrom:
@@ -316,7 +316,7 @@ objects:
             fi
         containers:
         - name: ${APP_NAME}
-          image: gitlab/gitlab-ce:13.6.4-ce.0
+          image: docker.io/gitlab/gitlab-ce:13.6.4-ce.0
           command:
           - /bin/sh
           - -c
