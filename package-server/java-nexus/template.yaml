@@ -78,7 +78,7 @@ objects:
       spec:
         containers:
         - name: nexus
-          image: sonatype/nexus3
+          image: docker.io/sonatype/nexus3:3.34.0
           ports:
           - containerPort: 8081
           volumeMounts:

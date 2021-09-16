@@ -167,7 +167,7 @@ objects:
     jobs:
       postSubmit:
         - name: git-checkout
-          image: alpine
+          image: docker.io/alpine:3.13.6
           script: |
             cp -rT `pwd` $(workspaces.s2i.path)/
           when:
@@ -196,7 +196,7 @@ objects:
             - git-checkout
         - name: deploy
           skipCheckout: true
-          image: tmaxcloudck/cicd-util:5.0.0
+          image: docker.io/tmaxcloudck/cicd-util:5.0.0
           imagePullPolicy: Always
           env:
           - name: APP_NAME

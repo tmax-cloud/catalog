@@ -78,7 +78,7 @@ objects:
       spec:
         containers:
         - name: verdaccio
-          image: verdaccio/verdaccio
+          image: docker.io/verdaccio/verdaccio:5.1.4
           ports:
           - containerPort: 4873
           env:

@@ -61,7 +61,7 @@ objects:
       spec:
         containers:
         - name: ${APP_NAME}
-          image: jenkins/jenkins:lts
+          image: docker.io/jenkins/jenkins:2.60.3
           ports:
           - name: http
             containerPort: 8080
