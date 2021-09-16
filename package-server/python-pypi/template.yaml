@@ -3,8 +3,8 @@ kind: ClusterTemplate
 metadata:
   name: pypi-package-server
   annotations:
-    template-version: 5.0.3
-    tested-operator-version: 1.1.0
+    template-version: 5.0.4
+    tested-operator-version: 0.2.1
 imageUrl: https://pypi.org/static/images/logo-large.72ad8bf1.svg
 provider: tmax
 recommend: false
