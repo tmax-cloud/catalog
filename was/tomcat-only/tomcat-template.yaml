@@ -3,8 +3,8 @@ kind: ClusterTemplate
 metadata:
   name: tomcat-only-template
   annotations:
-    template-version: 5.0.3
-    tested-operator-version: 1.1.0
+    template-version: 5.0.4
+    tested-operator-version: 0.2.1
   labels:
     template-was: tomcat-only
 imageUrl: https://upload.wikimedia.org/wikipedia/commons/7/7b/Tomcat-logo.svg
