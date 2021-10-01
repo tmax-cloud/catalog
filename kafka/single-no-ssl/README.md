@@ -1,4 +1,4 @@
-# GitLab Template Guide
+# Kafka Template Guide
 
 1. Template 생성
 ```bash
