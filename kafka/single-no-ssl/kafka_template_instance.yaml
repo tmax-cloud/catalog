@@ -1,0 +1,31 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: kafka-single-template-instance1
+  namespace: kafka
+  annotations:
+    template-version: 5.0.4
+    tested-operator-version: 0.2.1
+spec:
+  clustertemplate:
+    metadata:
+      name: kafka-single-template
+    parameters:
+    - name: APP_NAME
+      value: kafka-test1
+    - name: IS_EXTERNAL
+      value: "true"
+    - name: KAFKA_STORAGE
+      value: 5Gi
+    - name: STORAGE_CLASS
+      value: csi-cephfs-sc
+    - name: KAFKA_RESOURCE_CPU
+      value: 1
+    - name: KAFKA_RESOURCE_MEM
+      value: 1Gi
+    - name: ZOOKEEPER_RESOURCE_CPU
+      value: 1
+    - name: ZOOKEEPER_RESOURCE_MEM
+      value: 1Gi
+    - name: DEFAULT_TOPIC
+      value: tmax

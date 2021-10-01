@@ -1,0 +1,282 @@
+apiVersion: tmax.io/v1
+kind: ClusterTemplate
+metadata:
+  name: kafka-single-template
+shortDescription: "Kafka Single Deployment"
+longDescription: "1 Kafka 1 Zookeeper No SSL Only In-cluster Deployment"
+urlDescription: https://kafka.apache.org/
+imageUrl: "https://i.pinimg.com/originals/6a/46/51/6a46514d46e0edd07ab4e80c828d60a8.png"
+provider: tmax
+categories:
+- kafka
+- zookeeper
+- message
+parameters:
+- name: APP_NAME
+  displayName: AppName
+  description: A Kafka Name
+  required: true 
+- name: IS_EXTERNAL
+  displayName: Is Kafka Service External
+  description: Is Kafka Pub/Sub From/To Out-Cluster (true / false)
+  value: "false"
+  required: true
+- name: KAFKA_STORAGE
+  displayName: Kafka Storage
+  description: Kafka Storage size
+  value: 5Gi
+  required: true
+- name: STORAGE_CLASS
+  displayName: StorageClass
+  description: Storage class name
+  value: csi-cephfs-sc
+  required: true
+- name: KAFKA_RESOURCE_CPU
+  displayName: KafkaResourceCPU
+  description: Kafka Resource request, CPU (e.g., 1)
+  value: 1
+  required: true
+- name: KAFKA_RESOURCE_MEM
+  displayName: KafkaResourceMem
+  description: Kafka Resource request, Mem (e.g., 1Gi)
+  value: 1Gi
+  required: true
+- name: ZOOKEEPER_RESOURCE_CPU
+  displayName: KafkaResourceCPU
+  description: Kafka Resource request, CPU (e.g., 1)
+  value: 1
+  required: true
+- name: ZOOKEEPER_RESOURCE_MEM
+  displayName: KafkaResourceMem
+  description: Kafka Resource request, Mem (e.g., 1Gi)
+  value: 1Gi
+  required: true
+- name: DEFAULT_TOPIC
+  displayName: DefaultTopic
+  description: Default Topic name
+  value: tmax
+  required: false              
+objects:
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: ${APP_NAME}-kafka-account
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    name: ${APP_NAME}-kafka-role
+  rules:
+  - apiGroups: [""]
+    resources: ["services"]
+    resourceNames: ["${APP_NAME}-kafka"]
+    verbs: ["get", "list", "create", "patch", "update"] 
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: ${APP_NAME}-kafka-binding
+  subjects:
+  - kind: ServiceAccount
+    name: ${APP_NAME}-kafka-account
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: ${APP_NAME}-kafka-role  
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APP_NAME}-zookeeper
+    labels:
+      app: ${APP_NAME}-zookeeper
+  spec:
+    type: ClusterIP    
+    ports:
+    - name: zookeeper
+      port: 2181
+      targetPort: 2181
+    - name: follower
+      port: 2888
+      targetPort: 2888
+    - name: leader
+      port: 3888
+      targetPort: 3888
+    selector:
+      app: ${APP_NAME}-zookeeper
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APP_NAME}-kafka
+    labels:
+      app: ${APP_NAME}-kafka
+  spec:
+    type: ClusterIP    
+    ports:
+      - name: int
+        port: 9092
+        targetPort: 9092
+      - name: jmx
+        port: 1099
+        targetPort: 1099
+    selector:
+      app: ${APP_NAME}-kafka
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: ${APP_NAME}-kafka-pvc
+    labels:
+      app: ${APP_NAME}-kafka-pvc
+  spec:
+    storageClassName: ${STORAGE_CLASS}
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: ${KAFKA_STORAGE}
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: ${APP_NAME}-zookeeper
+    labels:
+      app: ${APP_NAME}-zookeeper
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: ${APP_NAME}-zookeeper
+    template:
+      metadata:
+        labels:
+          app: ${APP_NAME}-zookeeper
+      spec:
+        containers:
+        - name: ${APP_NAME}-zookeeper
+          image: wurstmeister/zookeeper:3.4.6
+          env:
+            - name: ALLOW_ANONYMOUS_LOGIN
+              value: "yes"
+          ports:
+            - containerPort: 2181
+          resources:
+            limits:
+              cpu: ${ZOOKEEPER_RESOURCE_CPU}
+              memory: ${ZOOKEEPER_RESOURCE_MEM}
+            requests:
+              cpu: ${ZOOKEEPER_RESOURCE_CPU}
+              memory: ${ZOOKEEPER_RESOURCE_MEM}
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: ${APP_NAME}-kafka
+    labels:
+      app: ${APP_NAME}-kafka
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: ${APP_NAME}-kafka
+    template:
+      metadata:
+        labels:
+          app: ${APP_NAME}-kafka
+      spec:
+        serviceAccountName: ${APP_NAME}-kafka-account
+        initContainers:
+        - name: parse-svc
+          image: docker.io/bitnami/kubectl:1.20.10
+          volumeMounts:
+          - name: shared
+            mountPath: /tmp/shared
+          resources:
+            limits:
+              cpu: ${KAFKA_RESOURCE_CPU}
+              memory: ${KAFKA_RESOURCE_MEM}
+            requests:
+              cpu: ${KAFKA_RESOURCE_CPU}
+              memory: ${KAFKA_RESOURCE_MEM}
+          command:
+          - /bin/bash
+          - -c
+          - -x
+          - |
+            IS_EXTERNAL="${IS_EXTERNAL}"
+            # Configure Service & Get ExternalIP
+            if [[ "$IS_EXTERNAL" == "true" ]]; then
+              kubectl patch service ${APP_NAME}-kafka --type=json -p '[{"op": "replace", "path": "/spec/type", "value": "LoadBalancer"}]'
+              EXTERNAL_IP=""
+              KAFKA_ADVERTISED_LISTENERS=""
+              while [ "$EXTERNAL_IP" == "" ]; do
+                EXTERNAL_IP=$(kubectl get service ${APP_NAME}-kafka -o jsonpath='{.status.loadBalancer.ingress[].ip}')
+                KAFKA_ADVERTISED_LISTENERS=INSIDE://$EXTERNAL_IP:9092
+                sleep 1
+              done
+              cat <<EOT >> /tmp/shared/KAFKA_ADVERTISED_LISTENERS
+              $KAFKA_ADVERTISED_LISTENERS
+            EOT
+            fi
+        containers:
+        - name: ${APP_NAME}-kafka
+          image: wurstmeister/kafka:2.12-2.0.1
+          command:
+          - /bin/sh
+          - -c
+          - -x
+          - |
+            IS_EXTERNAL="${IS_EXTERNAL}"
+            if [[ "$IS_EXTERNAL" == "true" ]]; then
+              export KAFKA_ADVERTISED_LISTENERS="$(cat /tmp/shared/KAFKA_ADVERTISED_LISTENERS)"
+              echo 'export KAFKA_ADVERTISED_LISTENERS="$(cat /tmp/shared/KAFKA_ADVERTISED_LISTENERS)"' >> /root/.bashrc
+            fi 
+            usr/bin/start-kafka.sh
+          env:
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: KAFKA_ADVERTISED_LISTENERS
+            value: "INSIDE://${APP_NAME}-kafka.$(NAMESPACE):9092"
+          - name: KAFKA_LISTENERS
+            value: "INSIDE://:9092"
+          - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+            value: "INSIDE:PLAINTEXT"
+          - name: KAFKA_INTER_BROKER_LISTENER_NAME
+            value: "INSIDE"
+          - name: KAFKA_ZOOKEEPER_CONNECT
+            value: "${APP_NAME}-zookeeper:2181"
+          - name: KAFKA_CREATE_TOPICS
+            value: "${DEFAULT_TOPIC}:1:1"   # Topic명:Partition개수:Replica개수
+          - name: KAFKA_BROKER_ID
+            value: "501"
+          - name: KAFKA_AUTO_CREATE_TOPICS_ENABLE
+            value: "true"
+          - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+            value: "1"
+          - name: KAFKA_LOG_DIRS
+            value: "/kafka/logs"
+          - name: JMX_PORT
+            value: "1099"
+          - name: KAFKA_JMX_OPTS
+            value: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=${APP_NAME}-kafka.$(NAMESPACE) -Dcom.sun.management.jmxremote.rmi.port=1099"  
+          ports:
+          - name: client
+            containerPort: 9092
+          volumeMounts:
+          - name: kafka-data
+            mountPath: /kafka
+          - name: shared
+            mountPath: /tmp/shared  
+          resources:
+            limits:
+              cpu: ${ZOOKEEPER_RESOURCE_CPU}
+              memory: ${ZOOKEEPER_RESOURCE_MEM}
+            requests:
+              cpu: ${ZOOKEEPER_RESOURCE_CPU}
+              memory: ${ZOOKEEPER_RESOURCE_MEM}  
+        volumes:
+        - name: kafka-data
+          persistentVolumeClaim:
+            claimName: ${APP_NAME}-kafka-pvc
+        - name: shared
+          emptyDir: {}    
+
+
+
+
