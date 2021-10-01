@@ -19,7 +19,7 @@ kubectl apply -f instance.yaml
   - kafka가 설치된 Cluster 내부에서 Pub/Sub 할 경우 : "false" ( ${APP_NAME}-kafka.${NAMESPACE}를 통해 통신가능 ex) test1-kafka.kafka:9092 )
 
 - KAFKA_STORAGE
-  -Kafka용 PVC의 크기 (default: 5Gi)
+  - Kafka용 PVC의 크기 (default: 5Gi)
 
 - STORAGE_CLASS  
   - Kafka용 PVC의 Storage Class (default: csi-cephfs-sc)
