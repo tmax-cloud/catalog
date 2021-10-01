@@ -15,8 +15,12 @@ kubectl apply -f instance.yaml
   - Kafka App 제목
 
 - IS_EXTERNAL
-  - kafka가 설치된 Cluster 외부에서 Pub/Sub 할 경우 : "true" ( 설치를 진행한 Namespace의 ${APP_NAME}-kafka service의 External IP:9092를 통해 통신가능  ex) 172.22.6.19:9092 ) 
-  - kafka가 설치된 Cluster 내부에서 Pub/Sub 할 경우 : "false" ( ${APP_NAME}-kafka.${NAMESPACE}를 통해 통신가능 ex) test1-kafka.kafka:9092 )
+  - kafka가 설치된 Cluster 외부에서 Pub/Sub 할 경우 : "true"  
+    - 설치를 진행한 Namespace의 ${APP_NAME}-kafka service의 External IP:9092를 통해 통신가능  
+    - ex) 172.22.6.19:9092 
+  - kafka가 설치된 Cluster 내부에서 Pub/Sub 할 경우 : "false" 
+    - ${APP_NAME}-kafka.${NAMESPACE}를 통해 통신가능 
+    - ex) test1-kafka.kafka:9092
 
 - KAFKA_STORAGE
   - Kafka용 PVC의 크기 (default: 5Gi)
