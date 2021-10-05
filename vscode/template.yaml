@@ -74,7 +74,7 @@ objects:
       spec:
         containers:
         - name: ${APP_NAME}
-          image: docker.io/codercom/code-server:3.11.1
+          image: docker.io/tmaxcloudck/codeserver:0.2
           ports:
           - name: http
             containerPort: 8080
