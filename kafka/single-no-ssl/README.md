@@ -46,6 +46,6 @@ kubectl apply -f instance.yaml
 ## Publisher / Consumer 구현 예시
 
 - Publisher : https://github.com/tmax-cloud/hyperauth/blob/main/src/main/java/com/tmax/hyperauth/eventlistener/kafka/producer/KafkaProducer.java
-
+  - Simple : kubectl -n kafka run kafka-producer -ti --image=quay.io/strimzi/kafka:0.25.0-kafka-2.8.0 --rm=true --restart=Never -- bin/kafka-console-producer.sh --broker-list kafka-service-ip:9092 --topic tmax
 - Consumer : https://github.com/tmax-cloud/hyperauth/blob/main/src/main/java/com/tmax/hyperauth/eventlistener/kafka/consumer/EventConsumer.java
-
+  - Simple : kubectl -n kafka run kafka-consumer -ti --image=quay.io/strimzi/kafka:0.25.0-kafka-2.8.0 --rm=true --restart=Never -- bin/kafka-console-consumer.sh --bootstrap-server kafka-service-ip:9092 --topic tmax --from-beginning
