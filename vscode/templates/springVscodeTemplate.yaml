@@ -1,0 +1,112 @@
+apiVersion: tmax.io/v1
+kind: ClusterTemplate
+metadata:
+  name: vscode-template
+shortDescription: VS Code Deployment
+longDescription: Visual Studio Code Deployment
+urlDescription: https://code.visualstudio.com/
+imageUrl: https://f1.codingworldnews.com/2019/05/66b3i9a88q.png
+provider: tmax
+categories:
+- vscode
+- ide
+parameters:
+  - name: APP_NAME
+    displayName: AppName
+    description: A VS Code Deployment Name
+    required: true
+  - name: STORAGE
+    displayName: Storage
+    description: Storage size
+    required: true
+  - name: STORAGE_CLASS
+    displayName: StorageClass
+    description: Storage class
+    value: csi-cephfs-sc
+    required: true
+  - name: SERVICE_TYPE
+    displayName: ServiceType
+    description: Service Type (ClusterIP/NodePort/LoadBalancer)
+    required: true
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APP_NAME}-service
+    labels:
+      app: ${APP_NAME}
+  spec:
+    type: ${SERVICE_TYPE}
+    ports:
+    - name: http
+      port: 8080
+    selector:
+      app: ${APP_NAME}
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: ${APP_NAME}-pvc
+    labels:
+      app: ${APP_NAME}
+  spec:
+    storageClassName: ${STORAGE_CLASS}
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: ${STORAGE}
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: ${APP_NAME}
+    labels:
+      app: ${APP_NAME}
+  spec:
+    selector:
+      matchLabels:
+        app: ${APP_NAME}
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: ${APP_NAME}
+      spec:
+        containers:
+        - name: ${APP_NAME}
+          image: docker.io/tmaxcloudck/codeserver:0.2.1
+          ports:
+          - name: http
+            containerPort: 8080
+          volumeMounts:
+          - name: ${APP_NAME}-pv
+            mountPath: /home/coder/project
+            subPath: project
+          - name: ${APP_NAME}-pv
+            mountPath: /home/coder/.config/code-server
+            subPath: config
+          - name: ${APP_NAME}-pv
+            mountPath: /home/coder/.local/share/code-server
+            subPath: user-data-dir
+        volumes:
+        - name: ${APP_NAME}-pv
+          persistentVolumeClaim:
+            claimName: ${APP_NAME}-pvc
+plans:
+- name: vscode-plan1
+  description: VSCode Plan
+  metadata:
+    bullets:
+    - VSCode Deployment Plan
+    costs:
+      amount: 100
+      unit: $
+  free: false
+  bindable: true
+  plan_updateable: false
+  schemas:
+    service_instance:
+      create:
+        parameters:
+          APP_NAME: vscode-deploy
+          STORAGE: 10Gi
