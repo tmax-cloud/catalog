@@ -1,0 +1,17 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: vscode-template-instance
+spec:
+  clustertemplate:
+    metadata:
+      name: vscode-template
+    parameters:
+    - name: APP_NAME
+      value: vscode-test-deploy
+    - name: STORAGE
+      value: 30Gi
+    - name: STORAGE_CLASS
+      value: csi-cephfs-sc
+    - name: SERVICE_TYPE
+      value: LoadBalancer
