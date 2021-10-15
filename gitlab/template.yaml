@@ -101,13 +101,22 @@ objects:
     resources: ["services"]
     resourceNames: ["${APP_NAME}-service"]
     verbs: ["get", "list", "create", "patch", "update"]
+  - apiGroups: ["extensions", "apps"]
+    resources: ["deployments"]
+    resourceNames: ["${APP_NAME}"]
+    verbs: ["get", "list", "create", "patch", "update", "delete"]
   - apiGroups: [""]
     resources: ["secrets"]
-    resourceNames: ["${KEYCLOAK_TLS_SECRET_NAME}"]
-    verbs: ["list", "get"]
+    verbs: ["get", "list", "create", "patch", "update", "delete"]
   - apiGroups: ["networkings", "extensions"]
     resources: ["ingresses"]
     resourceNames: ["${APP_NAME}-ingress"]
+    verbs: ["get", "list", "create", "patch", "update", "delete"]
+  - apiGroups: ["cert-manager.io"]
+    resources: ["Issuers"]
+    verbs: ["get", "list", "create", "patch", "update", "delete"]
+  - apiGroups: ["cert-manager.io"]
+    resources: ["Certificate","certificates"]
     verbs: ["get", "list", "create", "patch", "update", "delete"]
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: RoleBinding
@@ -138,13 +147,25 @@ objects:
       targetPort: 22
     selector:
       app: ${APP_NAME}
+- apiVersion: cert-manager.io/v1alpha2
+  kind: Issuer
+  metadata:
+    name: ${APP_NAME}-issuer
+    namespace: default
+  spec:
+    selfSigned: {}
 - apiVersion: networking.k8s.io/v1beta1
   kind: Ingress
   metadata:
     name: ${APP_NAME}-ingress
     annotations:
+      cert-manager.io/issuer: ${APP_NAME}-issuer
       kubernetes.io/ingress.class: nginx-shd
   spec:
+    tls:
+      - hosts:
+        - waiting.ip
+        secretName: ${APP_NAME}-tls
     rules:
     - host: waiting.ip
       http:
@@ -262,7 +283,39 @@ objects:
                     ING_HOST="${INGRESS_HOST}"
                     EXTERNAL_IP="http://${INGRESS_HOST}/"
                 fi
+
+                NOW_IP=$(kubectl get ingress ${APP_NAME}-ingress -o jsonpath='{.status.loadBalancer.ingress[].ip}')
+
+                # get ownerref for cert
+                apiVersion=$(kubectl get deploy ${APP_NAME} -o jsonpath='{.metadata.ownerReferences[0].apiVersion}')
+                kind=$(kubectl get deploy ${APP_NAME} -o jsonpath='{.metadata.ownerReferences[0].kind}')
+                name=$(kubectl get deploy ${APP_NAME} -o jsonpath='{.metadata.ownerReferences[0].name}')
+                uid=$(kubectl get deploy ${APP_NAME} -o jsonpath='{.metadata.ownerReferences[0].uid}')
+
+                # create certficiate
+                kubectl apply -f <(echo "
+                apiVersion: cert-manager.io/v1
+                kind: Certificate
+                metadata:
+                  name: ${APP_NAME}
+                  namespace: $NAMESPACE
+                  ownerReferences:
+                    - apiVersion: ${apiVersion}
+                      kind: ${kind}
+                      name: ${name}
+                      uid: ${uid}
+                spec:
+                  isCA: true
+                  dnsNames:
+                    - ${ING_HOST}
+
+                  secretName: ${APP_NAME}-tls
+                  issuerRef:
+                    name: ${APP_NAME}-issuer
+                ")
                 kubectl patch ingress ${APP_NAME}-ingress --type=json -p '[{"op": "replace", "path": "/spec/rules/0/host", "value": "'$ING_HOST'"}]'
+                kubectl patch ingress ${APP_NAME}-ingress --type=json -p '[{"op": "replace", "path": "/spec/tls/0/hosts/0", "value": "'$ING_HOST'"}]'
+
             else
                 echo "Something's wrong"
             fi
