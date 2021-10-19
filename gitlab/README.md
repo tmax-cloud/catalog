@@ -58,6 +58,9 @@ kubectl apply -f instance.yaml
 - KEYCLOAK_TLS_SECRET_NAME  
 : 키클록 TLS 인증서 시크릿 이름
 
+- TLS_SECRET_NAME
+: 사용자 TLS 인증서 시크릿 이름
+
 ## 키클록 연동 방법
 1. 키클록에서 클라이언트 생성
 - Name  
