@@ -87,6 +87,11 @@ parameters:
   description: Secret name where keycloak's tls file is located
   value: ''
   required: false
+- name: TLS_SECRET_NAME
+  displayName: user TLS Secret name
+  description: Secret name where user's tls file is located
+  value: ''
+  required: false
 objects:
 - apiVersion: v1
   kind: ServiceAccount
@@ -113,7 +118,7 @@ objects:
     resourceNames: ["${APP_NAME}-ingress"]
     verbs: ["get", "list", "create", "patch", "update", "delete"]
   - apiGroups: ["cert-manager.io"]
-    resources: ["Issuers"]
+    resources: ["issuers"]
     verbs: ["get", "list", "create", "patch", "update", "delete"]
   - apiGroups: ["cert-manager.io"]
     resources: ["Certificate","certificates"]
@@ -147,19 +152,11 @@ objects:
       targetPort: 22
     selector:
       app: ${APP_NAME}
-- apiVersion: cert-manager.io/v1alpha2
-  kind: Issuer
-  metadata:
-    name: ${APP_NAME}-issuer
-    namespace: default
-  spec:
-    selfSigned: {}
 - apiVersion: networking.k8s.io/v1beta1
   kind: Ingress
   metadata:
     name: ${APP_NAME}-ingress
     annotations:
-      cert-manager.io/issuer: ${APP_NAME}-issuer
       kubernetes.io/ingress.class: nginx-shd
   spec:
     tls:
@@ -234,11 +231,9 @@ objects:
             SVC_TYPE="${SERVICE_TYPE}"
             PORT="${WEB_NODE_PORT}"
             PORT_SSH="${SSH_PORT}"
-
             # Remove fractions
             PORT="${PORT/\.[0-9]*/}"
             PORT_SSH="${PORT_SSH/\.[0-9]*/}"
-
             # Configure Service
             if [[ "$SVC_TYPE" == "NodePort" ]]; then
                 if [[ "$PORT" == "80" ]]; then
@@ -249,12 +244,10 @@ objects:
             elif [[ "$SVC_TYPE" == "LoadBalancer" ]]; then
                 kubectl patch service ${APP_NAME}-service --type=json -p '[{"op": "replace", "path": "/spec/type", "value": "LoadBalancer"}]'
             fi
-
             # Delete Ingress if SVC_TYPE is not Ingress
             if [[ "$SVC_TYPE" != "Ingress" ]]; then
                 kubectl delete ingress ${APP_NAME}-ingress
             fi
-
             # Get external ip and port
             if [[ "$SVC_TYPE" == "ClusterIP" ]]; then
                 EXTERNAL_IP="http://$(kubectl get service ${APP_NAME}-service -o jsonpath='{.spec.clusterIP}')/"
@@ -283,48 +276,15 @@ objects:
                     ING_HOST="${INGRESS_HOST}"
                     EXTERNAL_IP="http://${INGRESS_HOST}/"
                 fi
-
                 NOW_IP=$(kubectl get ingress ${APP_NAME}-ingress -o jsonpath='{.status.loadBalancer.ingress[].ip}')
-
-                # get ownerref for cert
-                apiVersion=$(kubectl get deploy ${APP_NAME} -o jsonpath='{.metadata.ownerReferences[0].apiVersion}')
-                kind=$(kubectl get deploy ${APP_NAME} -o jsonpath='{.metadata.ownerReferences[0].kind}')
-                name=$(kubectl get deploy ${APP_NAME} -o jsonpath='{.metadata.ownerReferences[0].name}')
-                uid=$(kubectl get deploy ${APP_NAME} -o jsonpath='{.metadata.ownerReferences[0].uid}')
-
-                # create certficiate
-                kubectl apply -f <(echo "
-                apiVersion: cert-manager.io/v1
-                kind: Certificate
-                metadata:
-                  name: ${APP_NAME}
-                  namespace: $NAMESPACE
-                  ownerReferences:
-                    - apiVersion: ${apiVersion}
-                      kind: ${kind}
-                      name: ${name}
-                      uid: ${uid}
-                spec:
-                  isCA: true
-                  dnsNames:
-                    - ${ING_HOST}
-
-                  secretName: ${APP_NAME}-tls
-                  issuerRef:
-                    name: ${APP_NAME}-issuer
-                ")
                 kubectl patch ingress ${APP_NAME}-ingress --type=json -p '[{"op": "replace", "path": "/spec/rules/0/host", "value": "'$ING_HOST'"}]'
-                kubectl patch ingress ${APP_NAME}-ingress --type=json -p '[{"op": "replace", "path": "/spec/tls/0/hosts/0", "value": "'$ING_HOST'"}]'
-
             else
                 echo "Something's wrong"
             fi
-
             # Override external url
             if [[ "${EXTERNAL_URL}" != "" ]]; then
                 EXTERNAL_IP="${EXTERNAL_URL}"
             fi
-
             cat <<EOT >> /tmp/shared/omnibus.env
             external_url '$EXTERNAL_IP'
             gitlab_rails['gitlab_shell_ssh_port'] = $PORT_SSH
@@ -333,7 +293,6 @@ objects:
             unicorn['worker_processes'] = 4
             grafana['enable'] = false
             EOT
-
             # Add keycloak
             if [[ "${KEYCLOAK_URL}" != "" ]]; then
               if [[ "${KEYCLOAK_TLS_SECRET_NAME}" != "" ]]; then
@@ -367,6 +326,88 @@ objects:
             ]
             EOY
             fi
+        # insert certificate
+        - name: init-cert
+          image: docker.io/bitnami/kubectl:1.20.10
+          env:
+          - name: NODE_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          volumeMounts:
+          - name: shared
+            mountPath: /tmp/shared
+          resources:
+            limits:
+              cpu: ${RESOURCE_CPU}
+              memory: ${RESOURCE_MEM}
+            requests:
+              cpu: ${RESOURCE_CPU}
+              memory: ${RESOURCE_MEM}
+          command:
+          - /bin/bash
+          - -c
+          - -x
+          - |
+            SVC_TYPE="${SERVICE_TYPE}"
+            ING_HOST=$(kubectl get ingress ${APP_NAME}-ingress -o jsonpath='{.spec.rules[0].host}')
+
+            if [[ "$SVC_TYPE" == "Ingress" ]]; then
+              # if no secret provided, use self-signed certificate
+              if [[ "${TLS_SECRET_NAME}" == "" ]]; then
+                NOW_IP=$(kubectl get ingress ${APP_NAME}-ingress -o jsonpath='{.status.loadBalancer.ingress[].ip}')
+
+                # get ownerref for cert
+                APIVERSION=$(kubectl get deploy ${APP_NAME} -o jsonpath='{.metadata.ownerReferences[0].apiVersion}')
+                KIND=$(kubectl get deploy ${APP_NAME} -o jsonpath='{.metadata.ownerReferences[0].kind}')
+                NAME=$(kubectl get deploy ${APP_NAME} -o jsonpath='{.metadata.ownerReferences[0].name}')
+                _UID=$(kubectl get deploy ${APP_NAME} -o jsonpath='{.metadata.ownerReferences[0].uid}')
+
+                # create self-sgined issuer
+                kubectl apply -f <(echo "
+                apiVersion: cert-manager.io/v1alpha2
+                kind: Issuer
+                metadata:
+                  name: ${APP_NAME}-issuer
+                  namespace: $NAMESPACE
+                  ownerReferences:
+                    - apiVersion: ${APIVERSION}
+                      kind: ${KIND}
+                      name: ${NAME}
+                      uid: ${_UID}
+                spec:
+                  selfSigned: {}
+                ")
+                # create self-signed certficiate
+                kubectl apply -f <(echo "
+                apiVersion: cert-manager.io/v1
+                kind: Certificate
+                metadata:
+                  name: ${APP_NAME}
+                  namespace: $NAMESPACE
+                  ownerReferences:
+                    - apiVersion: ${APIVERSION}
+                      kind: ${KIND}
+                      name: ${NAME}
+                      uid: ${_UID}
+                spec:
+                  isCA: true
+                  dnsNames:
+                    - ${ING_HOST}
+                  secretName: ${APP_NAME}-tls
+                  issuerRef:
+                    name: ${APP_NAME}-issuer
+                ")
+                kubectl patch ingress ${APP_NAME}-ingress --type=json -p '[{"op": "replace", "path": "/spec/tls/0/hosts/0", "value": "'$ING_HOST'"}]'
+              else
+                kubectl patch ingress ${APP_NAME}-ingress --type=json -p '[{"op": "replace", "path": "/spec/tls/0/secretName", "value": "'$TLS_SECRET_NAME'"}]'
+              fi
+            fi
+
         containers:
         - name: ${APP_NAME}
           image: docker.io/gitlab/gitlab-ce:13.6.4-ce.0
@@ -435,4 +476,3 @@ plans:
         parameters:
           APP_NAME: gitlab-deploy
           STORAGE: 10Gi
-
