@@ -1,9 +1,9 @@
 apiVersion: tmax.io/v1
 kind: ClusterTemplate
 metadata:
-  name: strimzi-kafka-template-in-cluster
-shortDescription: "Kafka Single Internal Deployment"
-longDescription: "Kafka Zookeeper No SSL Only In-cluster Deployment"
+  name: strimzi-kafka-template-external
+shortDescription: "Kafka Single External Deployment"
+longDescription: "Kafka Zookeeper No SSL Only External Deployment"
 urlDescription: https://strimzi.io/
 imageUrl: "https://i.pinimg.com/originals/6a/46/51/6a46514d46e0edd07ab4e80c828d60a8.png"
 provider: tmax
@@ -79,9 +79,9 @@ objects:
           memory: ${KAFKA_RESOURCE_MEM}
           cpu: ${KAFKA_RESOURCE_CPU}
       listeners:
-        - name: plain
-          port: 9092
-          type: internal
+        - name: external
+          port: 9094
+          type: loadbalancer
           tls: false
       config:
         offsets.topic.replication.factor: 1
