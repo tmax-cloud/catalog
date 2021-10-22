@@ -1,5 +1,11 @@
 # Strimzi In-cluster Kafka Template Guide
 
+## Prerequisite
+- https://github.com/tmax-cloud/install-kafka-operator를 통해 strimzi cluster operator가 설치 되어 있어야 합니다.
+
+
+## Description
+
 - Strimzi Kafka Operator를 통해 띄운 No ssl, In cluster 전용 kafka template입니다.
 - K8s Cluster 내부에서만 Pub/Sub이 가능하고, 가능한 주소는 
 - ${APP_NAME}-kafka-bootstrap.${NAMESPACE}:9092  입니다.
