@@ -1,5 +1,10 @@
 # Strimzi External Kafka Template Guide
 
+## Prerequisite
+- https://github.com/tmax-cloud/install-kafka-operator를 통해 strimzi cluster operator가 설치 되어 있어야 합니다.
+
+
+## Description
 - Strimzi Kafka Operator를 통해 띄운 No ssl, External 전용 kafka template입니다.
 - K8s Cluster 내부/외부에서 Pub/Sub이 가능하고, 가능한 주소는 LoadBalancer type으로 Public IP를 발급 받을 수 있는 경우에만 사용가능 합니다.
 - Kafka Replica Count + 1 갯수의 Public IP가 필요합니다. 
