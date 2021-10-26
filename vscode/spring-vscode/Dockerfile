@@ -1,4 +1,4 @@
-FROM codercom/code-server
+FROM codercom/code-server:3.12.0
 
 RUN sudo apt update && \
     sudo apt install -y wget build-essential &&  sudo apt install unzip zip

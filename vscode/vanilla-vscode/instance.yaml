@@ -1,17 +1,21 @@
 apiVersion: tmax.io/v1
 kind: TemplateInstance
 metadata:
-  name: vscode-template-instance
+  name: vanilla-vscode-template-instance
+  namespace: default
+  annotations:
+    template-version: 5.0.4
+    tested-operator-version: 0.2.1
 spec:
   clustertemplate:
     metadata:
-      name: vscode-template
+      name: vanilla-vscode-template
     parameters:
     - name: APP_NAME
-      value: vscode-test-deploy
+      value: vanilla-vscode-deploy
     - name: STORAGE
       value: 30Gi
     - name: STORAGE_CLASS
       value: csi-cephfs-sc
     - name: SERVICE_TYPE
-      value: LoadBalancer
+      value: Ingress

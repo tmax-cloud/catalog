@@ -1,7 +1,10 @@
 apiVersion: tmax.io/v1
 kind: ClusterTemplate
 metadata:
-  name: vscode-template
+  name: vanilla-vscode-template
+  annotations:
+    template-version: 5.0.4
+    tested-operator-version: 0.2.1
 shortDescription: VS Code Deployment
 longDescription: Visual Studio Code Deployment
 urlDescription: https://code.visualstudio.com/
@@ -26,9 +29,62 @@ parameters:
     required: true
   - name: SERVICE_TYPE
     displayName: ServiceType
-    description: Service Type (ClusterIP/NodePort/LoadBalancer)
+    description: Service Type (ClusterIP/NodePort/LoadBalancer/Ingress)
     required: true
+  - name: EXTERNAL_URL
+    displayName: ExternalURL
+    description: External URL, if it's different from the default endpoint of SERVICE_TYPE
+    required: false
+    value: ''
+  - name: WEB_NODE_IP
+    displayName: WebNodeIP
+    description: (Only for NodePort type) Web NodeIP
+    required: false
+    value: ''
+  - name: WEB_NODE_PORT
+    displayName: WebNodePort
+    description: (Only for NodePort type) Web NodePort
+    required: false
+    value: 80
+    valueType: number
+  - name: INGRESS_HOST
+    displayName: IngressHost
+    description: (Only for Ingress type) Ingress hostname
+    required: false
+    value: ''
 objects:
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: ${APP_NAME}-account
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    name: ${APP_NAME}-role
+  rules:
+  - apiGroups: [""]
+    resources: ["services"]
+    resourceNames: ["${APP_NAME}-service"]
+    verbs: ["get", "list", "create", "patch", "update"]
+  - apiGroups: ["extensions", "apps"]
+    resources: ["deployments"]
+    resourceNames: ["${APP_NAME}"]
+    verbs: ["get", "list", "create", "patch", "update", "delete"]
+  - apiGroups: ["networkings", "extensions"]
+    resources: ["ingresses"]
+    resourceNames: ["${APP_NAME}-ingress"]
+    verbs: ["get", "list", "create", "patch", "update", "delete"]
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: ${APP_NAME}-binding
+  subjects:
+  - kind: ServiceAccount
+    name: ${APP_NAME}-account
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: ${APP_NAME}-role
 - apiVersion: v1
   kind: Service
   metadata:
@@ -36,12 +92,27 @@ objects:
     labels:
       app: ${APP_NAME}
   spec:
-    type: ${SERVICE_TYPE}
+    type: ClusterIP
     ports:
-    - name: http
-      port: 8080
+    - port: 80
+      name: web-ui
+      targetPort: 8080
     selector:
       app: ${APP_NAME}
+- apiVersion: networking.k8s.io/v1beta1
+  kind: Ingress
+  metadata:
+    name: ${APP_NAME}-ingress
+    annotations:
+      kubernetes.io/ingress.class: nginx-shd
+  spec:
+    rules:
+    - host: waiting.ip
+      http:
+        paths:
+        - backend:
+            serviceName: ${APP_NAME}-service
+            servicePort: 80
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -72,12 +143,90 @@ objects:
         labels:
           app: ${APP_NAME}
       spec:
+        serviceAccountName: ${APP_NAME}-account
+        initContainers:
+        - name: parse-svc
+          image: docker.io/bitnami/kubectl:1.20.10
+          env:
+          - name: NODE_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          resources:
+            limits:
+              cpu: 1
+              memory: 4Gi
+            requests:
+              cpu: 1
+              memory: 4Gi
+          command:
+          - /bin/bash
+          - -c
+          - -x
+          - |
+            SVC_TYPE="${SERVICE_TYPE}"
+            PORT="${WEB_NODE_PORT}"
+
+            # Remove fractions
+            PORT="${PORT/\.[0-9]*/}"
+            # Configure Service
+            if [[ "$SVC_TYPE" == "NodePort" ]]; then
+                if [[ "$PORT" == "80" ]]; then
+                  kubectl patch service ${APP_NAME}-service --type=json -p '[{"op": "replace", "path": "/spec/type", "value": "NodePort"}]'
+                  PORT=$(kubectl get service ${APP_NAME}-service -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}')
+                fi
+                kubectl patch service ${APP_NAME}-service --type=json -p '[{"op": "replace", "path": "/spec/type", "value": "NodePort"}, {"op": "replace", "path": "/spec/ports/0/nodePort", "value": '$PORT'}, {"op": "replace", "path": "/spec/ports/0/port", "value": '$PORT'}, {"op": "replace", "path": "/spec/ports/0/targetPort", "value": '$PORT'}]'
+            elif [[ "$SVC_TYPE" == "LoadBalancer" ]]; then
+                kubectl patch service ${APP_NAME}-service --type=json -p '[{"op": "replace", "path": "/spec/type", "value": "LoadBalancer"}]'
+            fi
+            # Delete Ingress if SVC_TYPE is not Ingress
+            if [[ "$SVC_TYPE" != "Ingress" ]]; then
+                kubectl delete ingress ${APP_NAME}-ingress
+            fi
+            # Get external ip and port
+            if [[ "$SVC_TYPE" == "ClusterIP" ]]; then
+                EXTERNAL_IP="http://$(kubectl get service ${APP_NAME}-service -o jsonpath='{.spec.clusterIP}')/"
+            elif  [[ "$SVC_TYPE" == "NodePort" ]]; then
+                if [[ "${WEB_NODE_IP}" != "" ]]; then
+                    NODE_IP="${WEB_NODE_IP}"
+                fi
+                PORT=$(kubectl get service ${APP_NAME}-service -o jsonpath='{.spec.ports[?(@.name=="http")].nodePort}')
+                EXTERNAL_IP="http://$NODE_IP:$PORT/"
+            elif  [[ "$SVC_TYPE" == "LoadBalancer" ]]; then
+                IP=""
+                while [ "$IP" == "" ]; do
+                  IP=$(kubectl get service ${APP_NAME}-service -o jsonpath='{.status.loadBalancer.ingress[].ip}')
+                  sleep 1
+                done
+                EXTERNAL_IP="http://$IP/"
+            elif  [[ "$SVC_TYPE" == "Ingress" ]]; then
+                if [[ "${INGRESS_HOST}" == "" ]]; then
+                    NOW_IP=""
+                    while [ "$NOW_IP" == "" ]; do
+                        NOW_IP=$(kubectl get ingress ${APP_NAME}-ingress -o jsonpath='{.status.loadBalancer.ingress[].ip}')
+                    done
+                    ING_HOST="${APP_NAME}.$NAMESPACE.${NOW_IP}.nip.io"
+                    EXTERNAL_IP="http://$ING_HOST/"
+                else
+                    ING_HOST="${INGRESS_HOST}"
+                    EXTERNAL_IP="http://${INGRESS_HOST}/"
+                fi
+                NOW_IP=$(kubectl get ingress ${APP_NAME}-ingress -o jsonpath='{.status.loadBalancer.ingress[].ip}')
+                kubectl patch ingress ${APP_NAME}-ingress --type=json -p '[{"op": "replace", "path": "/spec/rules/0/host", "value": "'$ING_HOST'"}]'
+            else
+                echo "Something's wrong"
+            fi
+            # Override external url
+            if [[ "${EXTERNAL_URL}" != "" ]]; then
+                EXTERNAL_IP="${EXTERNAL_URL}"
+            fi
         containers:
         - name: ${APP_NAME}
           image: docker.io/codercom/code-server:3.12.0
-          ports:
-          - name: http
-            containerPort: 8080
           volumeMounts:
           - name: ${APP_NAME}-pv
             mountPath: /home/coder/project
@@ -108,5 +257,5 @@ plans:
     service_instance:
       create:
         parameters:
-          APP_NAME: vscode-deploy
+          APP_NAME: vanila-vscode-deploy
           STORAGE: 10Gi
