@@ -1,0 +1,35 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: kong-konga-template-instance
+  # 적용하고자 하는 namespace를 생성 후 해당 namespace 적용
+  namespace: lsm
+spec:
+  clustertemplate:
+    metadata:
+      name: kong-konga-template
+    parameters:
+      #생성하고자 하는 postgres의 user ID
+    - name: DB_USER
+      value: "userid"
+
+      #생성하고자 하는 PWD
+    - name: DB_PASSWORD
+      value: "userpwd"
+
+      #생성하고자 하는 DB 명
+    - name: DB_DATABASE
+      value: "userdb"
+
+      #사용가능한 storageClassName 입력
+    - name: STORAGE_CLASS
+      value: csi-cephfs-sc
+
+      #storage의 volume 설정
+    - name: STORAGE_VOLUME
+      value: 1Gi
+
+      #Namespace와 동일한 값 입력
+    - name: PG_PATH
+      value: "lsm"
+
