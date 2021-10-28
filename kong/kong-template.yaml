@@ -2,7 +2,7 @@ apiVersion: tmax.io/v1
 kind: ClusterTemplate
 metadata:
   name: kong-konga-template
-shortDescription: "Kong with Konga Template"
+shortDescription: "Kong with Konga Demo Template"
 urlDescription: "https://konghq.com/"
 provider: tmax
 categories:
@@ -198,6 +198,17 @@ objects:
             value: ${DB_DATABASE}
           image: kong:2.5
           name: wait-for-migrations
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: datadir
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    storageClassName: csi-cephfs-sc
+    resources:
+      requests:
+        storage: 1Gi
 - apiVersion: apps/v1
   kind: StatefulSet
   metadata:
@@ -232,16 +243,10 @@ objects:
             name: datadir
             subPath: pgdata
         terminationGracePeriodSeconds: 60
-    volumeClaimTemplates:
-    - metadata:
-        name: datadir
-      spec:
-        accessModes:
-        - ReadWriteOnce
-        storageClassName: ${STORAGE_CLASS}
-        resources:
-          requests:
-            storage: ${STORAGE_VOLUME}
+        volumes:
+        - name: datadir
+          persistentVolumeClaim:
+            claimName: datadir
 - apiVersion: batch/v1
   kind: Job
   metadata:
