@@ -1,18 +1,18 @@
 # Kong API Gateway With Konga
 
 ## 구성요소 및 버전
-- - -
-* Kong
-* Konga
-* Postgres
-* busybox
+
+* Kong:2.5
+* Konga:0.14.9
+* Postgres:9.6
+* busybox:1.34.0
 
 ## Prerequisites  
-- - -
+
 * k8s cluster
 
 ## GUI 생성 가이드
-- - -
+
 
 __콘솔(개발자) > 서비스카탈로그(템플릿 인스턴스) > 템플릿(Kong-konga-template)__
 ### __Paramters__
@@ -23,16 +23,72 @@ __콘솔(개발자) > 서비스카탈로그(템플릿 인스턴스) > 템플릿(
 
 * __DB_DATABASE__ : postgres db 이름 지정
 
-* __STORAGE_CLASS__ : 사용가능한 storageclass의 이름 적용
-
-* __STORAGE_VOLUME__ : db에 할당할 storage volume size 지정
+* __STORAGE_VOLUME__ : db에 할당할 storage volume size 지정  
 
 * __PG_PATH__ : db 경로 설정 (namespace와 동일한 값 지정)  
 
+  _주의) 실행환경 내 StorageClass의 default가 지정되어 있어야 한다._
+
 ![하이퍼클라우드 인스턴스생성](./figure/HyperCloud_instance_create.PNG)
 
-## CLI 생성 가이드
-- - -
+
+## Konga GUI 사용 가이드
+  
+  1. Konga 계정 생성 (http://konga-loadbalancer_EXTERNAL_IP)
+
+     콘솔(마스터클러스터) > 네트워크(서비스) > konga-loadbalancer (namespace)
+     
+     konga-loadbalancer의 외부 로드밸런서위치(IP주소)를 입력하여 계정생성 페이지에 접속한다.
+
+     ![계정생성](./figure/konga_accountRegister.PNG)  
+  #
+  2. 생성한 계정으로 Konga 로그인
+
+     ![로그인](./figure/konga_signIn.PNG)  
+  #
+  3. Kong API Gateway Connection 생성
+
+     ![Kong 연결](./figure/konga_connection.PNG)
+
+     * NAME : 사용하고자 하는 Connection 이름을 원하는대로 지정  
+     * Kong Admin URL : Kong-proxy의  External_IP 사용  
+        - Protocol : https
+        - Host : kong-proxy.__[사용중인 Namespace]__.svc.cluster.local
+        - Port: 8444  
+      #
+  4. Service Resource 등록  
+     연결 완료 후 좌측 TopDown 메뉴 SERVICES > ADD NEW SERVICE 클릭  
+      
+      
+     ![Service 등록](./figure/konga_service.PNG)
+
+
+     * Name : 등록할 Service 이름 지정
+     * Description : Service 요약 설명
+     * URL : 등록하고자 하는 Service의 url 주소 입력
+     * Protocol, Host, Port : URL 입력 시 입력 필요 X  
+        
+        ex). 임의로 생성해놓은 echo pod와 연결된 echo svc 등록
+        ```bash
+        $ kubectl get svc
+
+        NAME       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)           AGE
+        echo       ClusterIP   10.96.248.153   <none>        8080/TCP,80/TCP   5d23h
+        ```
+        -> URL : http://10.96.248.153:80
+    
+     서비스 생성 완료 후 생성된 서비스 클릭, Route 생성
+
+     ![Route 등록](./figure/konga_route.PNG)
+
+     * Name : 등록할 Route 이름 지정
+     * Path : 매핑할 Path 지정 (ex. /echo)
+     * Method : 사용가능한 HTTP Method 지정  
+
+     __Route 생성 완료 후 kong-propxy ip에 매핑된 /echo 를 통해서 외부에서 service 접근 가능__
+
+## 추가) CLI 생성 가이드
+
 
 1. Namespace 생성  
 
@@ -64,8 +120,6 @@ __콘솔(개발자) > 서비스카탈로그(템플릿 인스턴스) > 템플릿(
     * __DB_PASSWORD__ : postgres user password
 
     * __DB_DATABASE__ : postgres db 이름 지정
-
-    * __STORAGE_CLASS__ : 사용가능한 storageclass의 이름 적용
 
     * __STORAGE_VOLUME__ : db에 할당할 storage volume 지정
 
@@ -138,57 +192,4 @@ __콘솔(개발자) > 서비스카탈로그(템플릿 인스턴스) > 템플릿(
 
     konga-loadbalancer의 EXTERNAL-IP로 접속하여 Konga GUI 사용 가능  
 
-
-
-## Konga GUI 사용 가이드
-- - -  
-  
-  1. Konga 계정 생성 (http://xxx.xxx.x.xxx/register)
-  
-     ![계정생성](./figure/konga_accountRegister.PNG)  
-  #
-  2. 생성한 계정으로 Konga 로그인
-
-     ![로그인](./figure/konga_signIn.PNG)  
-  #
-  3. Kong API Gateway Connection 생성
-
-     ![Kong 연결](./figure/konga_connection.PNG)
-
-     * NAME : 사용하고자 하는 Connection 이름을 원하는대로 지정  
-     * Kong Admin URL : Kong-proxy의  External_IP 사용  
-        - Protocol : https
-        - Host : kong-proxy.__[사용중인 Namespace]__.svc.cluster.local
-        - Port: 8444  
-      #
-  4. Service Resource 등록  
-     연결 완료 후 좌측 TopDown 메뉴 SERVICES > ADD NEW SERVICE 클릭  
-      
-      
-     ![Service 등록](./figure/konga_service.PNG)
-
-
-     * Name : 등록할 Service 이름 지정
-     * Description : Service 요약 설명
-     * URL : 등록하고자 하는 Service의 url 주소 입력
-     * Protocol, Host, Port : URL 입력 시 입력 필요 X  
-        
-        ex). 임의로 생성해놓은 echo pod와 연결된 echo svc 등록
-        ```bash
-        $ kubectl get svc
-
-        NAME       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)           AGE
-        echo       ClusterIP   10.96.248.153   <none>        8080/TCP,80/TCP   5d23h
-        ```
-        -> URL : http://10.96.248.153:80
-    
-     서비스 생성 완료 후 생성된 서비스 클릭, Route 생성
-
-     ![Route 등록](./figure/konga_route.PNG)
-
-     * Name : 등록할 Route 이름 지정
-     * Path : 매핑할 Path 지정 (ex. /echo)
-     * Method : 사용가능한 HTTP Method 지정  
-
-     Route 생성 완료 후 kong-propxy ip에 매핑된 /echo 를 통해서 외부에서 service 접근 가능
 
