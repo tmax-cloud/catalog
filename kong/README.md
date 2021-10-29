@@ -14,7 +14,7 @@
 ## GUI 생성 가이드
 
 
-콘솔(개발자) > 서비스카탈로그(템플릿 인스턴스) > 템플릿(Kong-konga-template)
+콘솔(개발자) > 서비스카탈로그(템플릿 인스턴스) > 템플릿 유형(클러스터 템플릿) > 템플릿(Kong-konga-template)
 ### __Parameters__
 
 _주의) 실행환경 내 StorageClass의 default가 지정되어 있어야 한다._
