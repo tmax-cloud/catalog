@@ -35,8 +35,6 @@
 
 ## GUI 생성 가이드
 
-서비스카탈로그 > 템플릿 인스턴스 > 템플릿 인스턴스 유형: 클러스터 템플릿 > java-s2b-template 선택 > parameter 입력 > 템플릿 인스턴스 생성
-
 ### Parameter 설명
 
 * POD_NAME
