@@ -2,8 +2,8 @@
 
 ## 구성 요소 및 버전
 * java 8 ([jdk-8u212](https://www.oracle.com/java/technologies/javase/8u212-relnotes.html))
-* maven ([apache-maven-3.8.3](https://dlcdn.apache.org/maven/maven-3/3.8.3/binaries/apache-maven-3.8.3-bin.tar.gz))
-* gradle ([gradle-7.2](https://services.gradle.org/distributions/gradle-7.2-bin.zip))
+* maven ([apache-maven-3.8.3](https://maven.apache.org/docs/3.8.3/release-notes.html))
+* gradle ([gradle-7.2](https://docs.gradle.org/7.2/release-notes.html))
 
 ## Prerequisites
 
@@ -33,8 +33,11 @@
   
       ![image](figure/userID.png)
 
+## GUI 생성 가이드
 
-## Parameter 설명
+서비스카탈로그 > 템플릿 인스턴스 > 템플릿 인스턴스 유형: 클러스터 템플릿 > java-s2b-template 선택 > parameter 입력 > 템플릿 인스턴스 생성
+
+### Parameter 설명
 
 * POD_NAME
   * Pod의 이름
