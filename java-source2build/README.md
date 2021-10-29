@@ -60,10 +60,10 @@
 * USR_BUILD_CMD
   * 빌드 시 필요한 command
   * build command 입력시 **각 커맨드 뒤에 꼭 ';' 붙여야 합니다**
-  * <예시> USR_BUILD_CMD = mvn compile; mvn package; mvn install;
-
+  * ex)
+    ![image](figure/build_cmd_example.png)
 * USR_RUN_CMD
   * 실행 시 필요한 command
   * run command 입력시 **각 커맨드 뒤에 꼭 ';' 붙여야 합니다**
-  * <예시> USR_RUN_CMD = java -cp hello-world.jar hello.HelloWorld;
-
+  * ex)
+    ![image](figure/run_cmd_example.png)
