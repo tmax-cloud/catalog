@@ -1,11 +1,11 @@
 apiVersion: tmax.io/v1
 kind: TemplateInstance
 metadata:
-  name: java-s2b-templateinstance
+  name: java-s2b-template-instance
 spec:
   clustertemplate:
     metadata:
-      name: java-s2b-clustertemplate
+      name: java-s2b-template
     parameters:
     - name: POD_NAME
       value: "java-s2b-test-pod" 
