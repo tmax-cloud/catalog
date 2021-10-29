@@ -1,9 +1,9 @@
 # java-source2build 사용 가이드
 
 ## 구성 요소 및 버전
-* java 8 ([jdk-8u212](https://www.oracle.com/java/technologies/javase/8u212-relnotes.html))
-* maven ([apache-maven-3.8.3](https://maven.apache.org/docs/3.8.3/release-notes.html))
-* gradle ([gradle-7.2](https://docs.gradle.org/7.2/release-notes.html))
+* java 8 (https://www.oracle.com/java/technologies/javase/8u212-relnotes.html)
+* maven (https://maven.apache.org/docs/3.8.3/release-notes.html)
+* gradle (https://docs.gradle.org/7.2/release-notes.html)
 
 ## Prerequisites
 
@@ -35,7 +35,7 @@
 
 ## GUI 생성 가이드
 
-서비스카탈로그 > 템플릿 인스턴스 > 템플릿 인스턴스 유형: 클러스터 템플릿 > java-s2b-template 선택 > parameter 입력 > 템플릿 인스턴스 생성
+콘솔(개발자) > 서비스카탈로그(템플릿 인스턴스) > 템플릿 인스턴스 유형(클러스터 템플릿) > 템플릿(java-s2b-template)
 
 ### Parameter 설명
 
@@ -60,10 +60,13 @@
 * USR_BUILD_CMD
   * 빌드 시 필요한 command
   * build command 입력시 **각 커맨드 뒤에 꼭 ';' 붙여야 합니다**
-  * <예시> USR_BUILD_CMD = mvn compile; mvn package; mvn install;
+  * ex) 
+
+    ![image](figure/build_cmd_example.png)
 
 * USR_RUN_CMD
   * 실행 시 필요한 command
   * run command 입력시 **각 커맨드 뒤에 꼭 ';' 붙여야 합니다**
-  * <예시> USR_RUN_CMD = java -cp hello-world.jar hello.HelloWorld;
+  * ex) 
 
+    ![image](figure/run_cmd_example.png)
