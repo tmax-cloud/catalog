@@ -29,8 +29,6 @@ _Namespace 당 하나의 인스턴스만 생성 가능_
   * postgres db 이름 지정
 * STORAGE_VOLUME  
   * db에 할당할 storage volume size 지정  
-* PG_PATH  
-  * db 경로 설정 (namespace와 동일한 값 지정)  
 
 ![하이퍼클라우드 인스턴스생성](./figure/HyperCloud_instance_create.PNG)
 
