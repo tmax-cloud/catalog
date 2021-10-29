@@ -1,0 +1,22 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: java-s2b-templateinstance
+spec:
+  clustertemplate:
+    metadata:
+      name: java-s2b-clustertemplate
+    parameters:
+    - name: POD_NAME
+      value: "java-s2b-test-pod" 
+    - name: GIT_REPO
+      value: "https://github.com/ElenaSihyungLee/privateRepo.git"
+    - name: GIT_TOKEN
+      value: "abcdefghijklmnopqrstq1234567890"
+    - name: GIT_ID
+      value: "ElenaSihyungLee"
+    - name: USR_BUILD_CMD
+      value: "mvn compile; mvn package; mvn install;"
+    - name: USR_RUN_CMD
+      value: "java -cp target/jb-hello-world-maven-0.1.0.jar hello.HelloWorld;"
+
