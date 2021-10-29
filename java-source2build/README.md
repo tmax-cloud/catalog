@@ -1,9 +1,9 @@
 # java-source2build 사용 가이드
 
 ## 구성 요소 및 버전
-* java 8 ([jdk-8u212](https://www.oracle.com/java/technologies/javase/8u212-relnotes.html))
-* maven ([apache-maven-3.8.3](https://maven.apache.org/docs/3.8.3/release-notes.html))
-* gradle ([gradle-7.2](https://docs.gradle.org/7.2/release-notes.html))
+* java 8 (https://www.oracle.com/java/technologies/javase/8u212-relnotes.html)
+* maven (https://maven.apache.org/docs/3.8.3/release-notes.html)
+* gradle (https://docs.gradle.org/7.2/release-notes.html)
 
 ## Prerequisites
 
