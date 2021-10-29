@@ -2,10 +2,10 @@
 
 ## 구성요소 및 버전
 
-* Kong:2.5
-* Konga:0.14.9
-* Postgres:9.6
-* busybox:1.34.0
+* Kong:2.5 (https://konghq.com/)
+* Konga:0.14.9 (https://github.com/pantsel/konga)
+* Postgres:9.6 (https://www.postgresql.org/)
+* busybox:1.34.0 (https://busybox.net/)
 
 ## Prerequisites  
 
@@ -14,20 +14,21 @@
 ## GUI 생성 가이드
 
 
-__콘솔(개발자) > 서비스카탈로그(템플릿 인스턴스) > 템플릿(Kong-konga-template)__
-### __Paramters__
+콘솔(개발자) > 서비스카탈로그(템플릿 인스턴스) > 템플릿(Kong-konga-template)
+### __Parameters__
 
-* __DB_USER__ : postgres에 생성할 user ID
+_주의) 실행환경 내 StorageClass의 default가 지정되어 있어야 한다._
 
-* __DB_PASSWORD__ : postgres user password
-
-* __DB_DATABASE__ : postgres db 이름 지정
-
-* __STORAGE_VOLUME__ : db에 할당할 storage volume size 지정  
-
-* __PG_PATH__ : db 경로 설정 (namespace와 동일한 값 지정)  
-
-  _주의) 실행환경 내 StorageClass의 default가 지정되어 있어야 한다._
+* DB_USER  
+  * postgres에 생성할 user ID  
+* DB_PASSWORD  
+  * postgres user password
+* DB_DATABASE  
+  * postgres db 이름 지정
+* STORAGE_VOLUME  
+  * db에 할당할 storage volume size 지정  
+* PG_PATH  
+  * db 경로 설정 (namespace와 동일한 값 지정)  
 
 ![하이퍼클라우드 인스턴스생성](./figure/HyperCloud_instance_create.PNG)
 

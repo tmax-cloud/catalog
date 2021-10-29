@@ -9,6 +9,7 @@ categories:
 - kong
 - konga
 - postgres
+- busybox
 
 parameters:
 - name: DB_USER
@@ -351,3 +352,4 @@ objects:
       targetPort: 1337
     selector:
       app.kubernetes.io/instance: konga
+
