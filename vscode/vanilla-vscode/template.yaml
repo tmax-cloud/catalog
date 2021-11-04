@@ -52,6 +52,16 @@ parameters:
     description: (Only for Ingress type) Ingress hostname
     required: false
     value: ''
+  - name: GIT_EMAIL
+    displayName: GitEmail
+    description: Git emial for git config
+    required: false
+    value: ''
+  - name: GIT_USERNAME
+    displayName: GitUserName
+    description: Git username for git config
+    required: false
+    value: ''
 objects:
 - apiVersion: v1
   kind: ServiceAccount
@@ -227,6 +237,19 @@ objects:
         containers:
         - name: ${APP_NAME}
           image: docker.io/codercom/code-server:3.12.0
+          command:
+            - /bin/bash
+            - -c
+            - |
+              EMAIL="${GIT_EMAIL}"
+              USR_NAME="${GIT_USERNAME}"
+              if [[ "$EMAIL" != "" ]]; then
+                git config --global user.email ${EMAIL}
+              fi
+              if [[ "$USR_NAME" != "" ]]; then
+                git config --global user.name ${USR_NAME}
+              fi
+              code-server --auth none --bind-addr 0.0.0.0:8080
           volumeMounts:
           - name: ${APP_NAME}-pv
             mountPath: /home/coder/project

@@ -19,3 +19,7 @@ spec:
       value: csi-cephfs-sc
     - name: SERVICE_TYPE
       value: Ingress
+    - name: GIT_EMAIL
+      value: ''
+    - name: GIT_USERNAME
+      value: ''
