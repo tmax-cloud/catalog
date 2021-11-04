@@ -56,3 +56,10 @@ value: LoadBalancer
 - INGRESS_HOST  
   : SERVICE_TYPE에 Ingress를 사용하는 경우, Host 명시.
   : 명시되지 않을 경우 `<APP_NAME>.<네임스페이스>.<Ingress 컨트롤러 IP>.nip.io` 사용
+  
+- GIT_EMAIL
+
+  : Git config 설정 (Email )
+
+- GIT_USERNAME  
+  : Git config 설정 (username)
