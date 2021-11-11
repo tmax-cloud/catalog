@@ -238,7 +238,7 @@ objects:
 
         containers:
         - name: ${APP_NAME}
-          image: docker.io/tmaxcloudck/codeserver:0.2.1
+          image: docker.io/tmaxcloudck/codeserver:0.2.2
           command:
             - /bin/bash
             - -c
@@ -251,6 +251,8 @@ objects:
               if [[ "$USR_NAME" != "" ]]; then
                 git config --global user.name ${USR_NAME}
               fi
+              code-server--install-extension vscjava.vscode-java-pack
+              code-server --install-extension pivotal.vscode-boot-dev-pack
               code-server --auth none --bind-addr 0.0.0.0:8080
           volumeMounts:
           - name: ${APP_NAME}-pv
