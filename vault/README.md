@@ -12,7 +12,7 @@ kubectl apply -f instance.yaml
 
 ## Parameter 설명
 - APP_NAME  
-  - Kafka App 제목
+  - Vault App 제목
 
 - NAMESPACE
   - Vault 가 설치될 Namespace
