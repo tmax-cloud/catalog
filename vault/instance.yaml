@@ -1,0 +1,28 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: single-vault-with-agent1
+  namespace: vault-test
+  annotations:
+    template-version: 5.0.4
+    tested-operator-version: 0.2.1
+spec:
+  clustertemplate:
+    metadata:
+      name: single-vault-with-agent-template
+    parameters:
+    - name: APP_NAME
+      value: woo1
+    - name: NAMESPACE
+      value: vault-test 
+    - name: SERVICE_TYPE
+      value: LoadBalancer
+    - name: VAULT_STORAGE
+      value: 5Gi
+    - name: STORAGE_CLASS
+      value: csi-cephfs-sc
+    - name: VAULT_RESOURCE_CPU
+      value: 250m
+    - name: VAULT_RESOURCE_MEM
+      value: 256Mi
+
