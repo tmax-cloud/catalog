@@ -62,6 +62,7 @@ objects:
   kind: ServiceMonitor
   metadata:
     name: redis
+    namespace: monitoring
     labels:
       app: redis
       release: prometheus
