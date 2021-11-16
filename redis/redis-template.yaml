@@ -1,0 +1,92 @@
+apiVersion: tmax.io/v1
+kind: ClusterTemplate
+metadata:
+  name: redis-template
+shortDescription: "Redis Template with exporter"
+urlDescription: "https://redis.io"
+provider: tmax
+categories:
+- redis
+
+parameters:
+- name: REDIS_PASSWORD
+  displayName: redis_password
+  description: redis password
+  value: mypassword
+  required: true
+
+objects:
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: redis-secret
+  type: Opaque
+  stringData:
+    redis-config: |
+      maxmemory 20mb
+      maxmemory-policy allkeys-lru
+      appendonly yes
+      appendfilename "appendonly.aof"
+      no-appendfsync-on-rewrite no
+      auto-aof-rewrite-percentage 100
+      auto-aof-rewrite-min-size 64mb
+      requirepass "${REDIS_PASSWORD}"
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: redis-data
+  spec:
+    accessModes: [ "ReadWriteOnce" ]
+    resources:
+      requests:
+        storage: 100Mi
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: redis
+    labels:
+      app: redis
+      name: redis
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: redis
+    template:
+      metadata:
+        name: redis
+        labels:
+            app: redis
+      spec:
+        containers:
+        - name: redis
+          image: docker.io/redis:6
+          imagePullPolicy: IfNotPresent
+          command:
+            - redis-server
+            - "/redis-master/redis.conf"
+          env:
+          - name: MASTER
+            value: "true"
+          ports:
+          - containerPort: 6379
+            name: redis
+          volumeMounts:
+          - mountPath: /data
+            name: data
+          - mountPath: /redis-master
+            name: config
+          resources:
+            limits:
+              cpu: "0.5"
+              memory: "500m"
+        volumes:
+          - name: data
+            persistentVolumeClaim:
+              claimName: redis-data
+          - name: config
+            secret:
+              secretName: redis-secret
+              items:
+              - key: redis-config
+                path: redis.conf

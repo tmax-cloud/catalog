@@ -1,0 +1,12 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: redis-template-instance
+  namespace: redis
+spec:
+  clustertemplate:
+    metadata:
+      name: redis-template
+    parameters:
+    - name: REDIS_PASSWORD
+      value: "mypassword"
