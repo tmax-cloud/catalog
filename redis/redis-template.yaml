@@ -109,14 +109,14 @@ objects:
             name: config
           resources:
             limits:
-              cpu: "0.5"
-              memory: "500m"
+              cpu: 500m
+              memory: 500Mi
         - name: redis-exporter
           image: oliver006/redis_exporter:latest
           resources:
             requests:
-              cpu: 100m
-              memory: 100Mi
+              cpu: 300m
+              memory: 300Mi
           ports:
           - containerPort: 9121
         volumes:
