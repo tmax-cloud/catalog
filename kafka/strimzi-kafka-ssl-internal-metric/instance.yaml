@@ -13,6 +13,8 @@ spec:
     parameters:
     - name: APP_NAME
       value: kafka-test1
+    - name: NAMESPACE
+      value: kafka
     - name: KAFKA_REPLICA_COUNT
       value: 1
     - name: ZOOKEEPER_REPLICA_COUNT
