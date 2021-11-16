@@ -1,9 +1,9 @@
 apiVersion: tmax.io/v1
 kind: ClusterTemplate
 metadata:
-  name: strimzi-kafka-template-in-cluster-ssl-metric
-shortDescription: "Kafka Single Internal Deployment"
-longDescription: "Kafka Zookeeper SSL In-cluster Metric Deployment"
+  name: strimzi-kafka-template-in-cluster-no-ssl-metric
+shortDescription: "Kafka Internal no ssl with prometheus metric Deployment"
+longDescription: "Kafka Zookeeper no-SSL In-cluster Metric Deployment"
 urlDescription: https://strimzi.io/
 imageUrl: "https://i.pinimg.com/originals/6a/46/51/6a46514d46e0edd07ab4e80c828d60a8.png"
 provider: tmax
@@ -63,29 +63,6 @@ parameters:
   value: 1Gi
   required: true             
 objects:
-- apiVersion: cert-manager.io/v1alpha2
-  kind: Certificate
-  metadata:
-    name: kafka-broker-jks-certificate
-  spec:
-    secretName: kafka-jks
-    commonName: kafka
-    dnsNames:
-      - tmax-cloud
-      - "*.*.*.svc"
-      - kafka-kafka-bootstrap.hyperauth
-    isCA: false
-    keySize: 2048
-    duration: 8760h # 360d=1y
-    renewBefore: 720h # 30d
-    usages:
-      - digital signature
-      - key encipherment
-      - server auth
-    issuerRef:
-      name: tmaxcloud-issuer
-      kind: ClusterIssuer
-      group: cert-manager.io    
 - apiVersion: kafka.strimzi.io/v1beta2
   kind: Kafka
   metadata:
@@ -105,12 +82,7 @@ objects:
         - name: plain
           port: 9092
           type: internal
-          tls: true
-          configuration:
-            brokerCertChainAndKey:
-              secretName: kafka-jks
-              certificate: tls.crt
-              key: tls.key
+          tls: false
       logging:
         type: inline
         loggers:
