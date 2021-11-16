@@ -1,9 +1,9 @@
 apiVersion: tmax.io/v1
 kind: ClusterTemplate
 metadata:
-  name: strimzi-kafka-template-in-cluster
+  name: strimzi-kafka-template-in-cluster-ssl-metric
 shortDescription: "Kafka Single Internal Deployment"
-longDescription: "Kafka Zookeeper No SSL Only In-cluster Deployment"
+longDescription: "Kafka Zookeeper SSL In-cluster Metric Deployment"
 urlDescription: https://strimzi.io/
 imageUrl: "https://i.pinimg.com/originals/6a/46/51/6a46514d46e0edd07ab4e80c828d60a8.png"
 provider: tmax
