@@ -61,7 +61,7 @@ kubectl apply -f instance.yaml
 - Consumer : https://github.com/tmax-cloud/hyperauth/blob/main/src/main/java/com/tmax/hyperauth/eventlistener/kafka/consumer/EventConsumer.java
   - Simple : kubectl -n kafka run kafka-consumer -ti --image=quay.io/strimzi/kafka:0.25.0-kafka-2.8.0 --rm=true --restart=Never -- bin/kafka-console-consumer.sh --bootstrap-server ${APP_NAME}-kafka-bootstrap.${NAMESPACE}:9092 --topic tmax --from-beginning
 
-### Grafana Dashboard 예시
+## Grafana Dashboard 예시
 - Kafka Exporter
   - https://github.com/strimzi/strimzi-kafka-operator/blob/main/examples/metrics/grafana-dashboards/strimzi-kafka-exporter.json
 - Kafka Broker
