@@ -20,7 +20,7 @@ spec:
     - name: KAFKA_STORAGE
       value: 5Gi
     - name: ZOOKEEPER_STORAGE
-      value: 5Gi    
+      value: 1Gi    
     - name: STORAGE_CLASS
       value: csi-cephfs-sc
     - name: KAFKA_RESOURCE_CPU
