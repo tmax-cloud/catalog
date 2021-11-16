@@ -46,7 +46,6 @@ objects:
     name: redis
     labels:
       app: redis
-      name: redis
   spec:
     replicas: 1
     selector:
@@ -54,7 +53,9 @@ objects:
         app: redis
     template:
       metadata:
-        name: redis
+        annotations:
+          prometheus.io/scrape: "true"
+          prometheus.io/port: "9121"
         labels:
             app: redis
       spec:
@@ -70,7 +71,6 @@ objects:
             value: "true"
           ports:
           - containerPort: 6379
-            name: redis
           volumeMounts:
           - mountPath: /data
             name: data
@@ -80,6 +80,14 @@ objects:
             limits:
               cpu: "0.5"
               memory: "500m"
+        - name: redis-exporter
+          image: oliver006/redis_exporter:latest
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          ports:
+          - containerPort: 9121
         volumes:
           - name: data
             persistentVolumeClaim:
