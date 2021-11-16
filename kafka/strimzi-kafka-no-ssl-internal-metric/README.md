@@ -2,7 +2,7 @@
 
 ## Prerequisite
 - https://github.com/tmax-cloud/install-kafka-operator를 통해 strimzi cluster operator가 설치 되어 있어야 합니다.
-- Prometheus 및 Grafana가 설치 되어 잇어야한다.
+- Prometheus 및 Grafana가 설치 되어 있어야 합니다.
 
 ## Description
 - Strimzi Kafka Operator를 통해 띄운 No ssl, Metric 수집 In cluster 전용 kafka template입니다.
