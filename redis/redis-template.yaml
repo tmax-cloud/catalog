@@ -40,6 +40,37 @@ objects:
     resources:
       requests:
         storage: 100Mi
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: redis-service
+    labels:
+      app: redis
+  spec:
+    selector:
+      app: redis
+    ports:
+    - name: redis
+      protocol: TCP
+      port: 6379
+      targetPort: 6379
+    - name: redis-exporter
+      protocol: TCP
+      port: 9121
+      targetPort: 9121
+- apiVersion: monitoring.coreos.com/v1
+  kind: ServiceMonitor
+  metadata:
+    name: redis
+    labels:
+      app: redis
+      release: prometheus
+  spec:
+    selector:
+      matchLabels:
+        app: redis
+    endpoints:
+    - port: redis-exporter
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
