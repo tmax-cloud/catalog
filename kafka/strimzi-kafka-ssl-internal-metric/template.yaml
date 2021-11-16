@@ -17,6 +17,10 @@ parameters:
   displayName: AppName
   description: A Kafka Name
   required: true 
+- name: NAMESPACE
+  displayName: Namespace
+  description: Namespace
+  required: true
 - name: KAFKA_REPLICA_COUNT
   displayName: Kafka Replica Count
   description: Number of Kafka Broker
