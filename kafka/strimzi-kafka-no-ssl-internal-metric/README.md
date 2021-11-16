@@ -23,7 +23,10 @@ kubectl apply -f instance.yaml
 ## Parameter 설명
 - APP_NAME  
   - Kafka App 제목
-
+  
+- NAMESPACE
+  - Namespace 이름
+ 
 - KAFKA_REPLICA_COUNT  
   - Kafka Broker 갯수
 
