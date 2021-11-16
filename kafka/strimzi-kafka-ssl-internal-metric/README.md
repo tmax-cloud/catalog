@@ -1,12 +1,11 @@
-# Strimzi In-cluster Kafka Template Guide
+# Strimzi In-cluster With Meric Kafka Template Guide
 
 ## Prerequisite
 - https://github.com/tmax-cloud/install-kafka-operator를 통해 strimzi cluster operator가 설치 되어 있어야 합니다.
-
+- Prometheus 및 Grafana가 설치 되어 잇어야한다.
 
 ## Description
-
-- Strimzi Kafka Operator를 통해 띄운 No ssl, In cluster 전용 kafka template입니다.
+- Strimzi Kafka Operator를 통해 띄운 No ssl, Metric 수집 In cluster 전용 kafka template입니다.
 - K8s Cluster 내부에서만 Pub/Sub이 가능하고, 가능한 주소는 
 - ${APP_NAME}-kafka-bootstrap.${NAMESPACE}:9092  입니다.
 
@@ -35,7 +34,7 @@ kubectl apply -f instance.yaml
   - Kafka용 PVC의 크기 (default: 5Gi)
 
 - ZOOKEEPER_STORAGE
-  - Zookeeper용 PVC의 크기 (default: 5Gi)
+  - Zookeeper용 PVC의 크기 (default: 1Gi)
 
 - STORAGE_CLASS  
   - Kafka용 PVC의 Storage Class (default: csi-cephfs-sc)
