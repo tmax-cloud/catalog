@@ -107,7 +107,7 @@ objects:
         type: jmxPrometheusExporter
         valueFrom:
           configMapKeyRef:
-            name: kafka-metrics
+            name: ${APP_NAME}-kafka-metrics
             key: kafka-metrics-config.yml  
     zookeeper:
       replicas: ${ZOOKEEPER_REPLICA_COUNT}
@@ -126,7 +126,7 @@ objects:
         type: jmxPrometheusExporter
         valueFrom:
           configMapKeyRef:
-            name: kafka-metrics
+            name: ${APP_NAME}-kafka-metrics
             key: zookeeper-metrics-config.yml  
     entityOperator:
       topicOperator: {}

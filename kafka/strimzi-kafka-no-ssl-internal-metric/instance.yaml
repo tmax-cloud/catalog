@@ -8,13 +8,13 @@ metadata:
     tested-operator-version: 0.2.1
 spec:
   clustertemplate:
-    metadata:
-      name: strimzi-kafka-template-in-cluster-with-metric
+    metadata: 
+      name: strimzi-kafka-template-in-cluster-no-ssl-metric
     parameters:
     - name: APP_NAME
-      value: kafka-test1
+      value: test1
     - name: NAMESPACE
-      value: kafka
+      value: woo
     - name: KAFKA_REPLICA_COUNT
       value: 1
     - name: ZOOKEEPER_REPLICA_COUNT
