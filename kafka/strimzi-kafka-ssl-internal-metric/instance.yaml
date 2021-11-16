@@ -1,7 +1,7 @@
 apiVersion: tmax.io/v1
 kind: TemplateInstance
 metadata:
-  name: strimzi-kafka-template-in-cluster-instance1
+  name: strimzi-kafka-template-in-cluster-metric-instance1
   namespace: kafka
   annotations:
     template-version: 5.0.4
@@ -9,7 +9,7 @@ metadata:
 spec:
   clustertemplate:
     metadata:
-      name: strimzi-kafka-template-in-cluster
+      name: strimzi-kafka-template-in-cluster-with-metric
     parameters:
     - name: APP_NAME
       value: kafka-test1
