@@ -30,7 +30,14 @@ objects:
       no-appendfsync-on-rewrite no
       auto-aof-rewrite-percentage 100
       auto-aof-rewrite-min-size 64mb
-      requirepass "${REDIS_PASSWORD}"
+      requirepass ${REDIS_PASSWORD}
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: redis-password
+  type: Opaque
+  stringData:
+    REDIS_PASSWORD: ${REDIS_PASSWORD}
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -97,9 +104,6 @@ objects:
           command:
             - redis-server
             - "/redis-master/redis.conf"
-          env:
-          - name: MASTER
-            value: "true"
           ports:
           - containerPort: 6379
           volumeMounts:
@@ -113,6 +117,9 @@ objects:
               memory: 500Mi
         - name: redis-exporter
           image: oliver006/redis_exporter:latest
+          envFrom:
+          - secretRef:
+              name: redis-password
           resources:
             requests:
               cpu: 300m

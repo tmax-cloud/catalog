@@ -39,3 +39,8 @@
         ```
     * 공식 문서  
       - https://redis.io/commands#string
+
+## Grafana Dashboard 예시
+- Redis Exporter
+  - https://github.com/oliver006/redis_exporter/blob/master/contrib/grafana_prometheus_redis_dashboard.json
+  * 비고 : ${DS_PROMETHEUS}를 prometheus로 치환해야 함
