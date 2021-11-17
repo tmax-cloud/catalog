@@ -16,17 +16,12 @@
 
 ## Redis 사용법
 
-1. Redis 컨테이너 내부 접속
+1. Redis 컨테이너 내부 진입 및 redis 접속
     ```bash
-    kubectl exec -it `kubectl get pod --selector=app=redis -n redis -o jsonpath='{$.items[0].metadata.name}'` -n redis -- bash
-    ```
-2. redis-cli 실행
-    ```bash
-    redis-cli -a "mypassword"
+    kubectl exec -it `kubectl get pod --selector=app=redis -n redis -o jsonpath='{$.items[0].metadata.name}'` -n redis -- redis-cli -a "mypassword"
     ```
 
-
-3. 데이터 저장/조회 예시 (string 타입)
+2. 데이터 저장/조회 예시 (string 타입)
     * key value 저장
         ```
         127.0.0.1:6379> set my-key my-value
