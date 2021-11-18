@@ -11,6 +11,8 @@
     ```
 
 ## Parameter 설명
+- REDIS_NAME
+  - Redis 인스턴스의 이름. {REDIS_NAME}-redis의 형식으로 생성 됨
 - REDIS_PASSWORD
   - Redis 비밀번호
 
