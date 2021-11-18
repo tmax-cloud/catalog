@@ -24,7 +24,7 @@ objects:
 - apiVersion: v1
   kind: Secret
   metadata:
-    name: ${REDIS_NAME}-secret
+    name: ${REDIS_NAME}-redis-secret
   type: Opaque
   stringData:
     redis-config: |
@@ -40,7 +40,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: ${REDIS_NAME}-data
+    name: ${REDIS_NAME}-redis-data
   spec:
     accessModes: [ "ReadWriteOnce" ]
     resources:
@@ -49,12 +49,12 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
-    name: ${REDIS_NAME}-service
+    name: ${REDIS_NAME}-redis-service
     labels:
-      app: ${REDIS_NAME}
+      app: ${REDIS_NAME}-redis
   spec:
     selector:
-      app: ${REDIS_NAME}
+      app: ${REDIS_NAME}-redis
     ports:
     - name: redis
       protocol: TCP
@@ -67,37 +67,37 @@ objects:
 - apiVersion: monitoring.coreos.com/v1
   kind: ServiceMonitor
   metadata:
-    name: ${REDIS_NAME}
+    name: ${REDIS_NAME}-redis
     labels:
-      app: ${REDIS_NAME}
+      app: ${REDIS_NAME}-redis
       release: prometheus
   spec:
     selector:
       matchLabels:
-        app: ${REDIS_NAME}
+        app: ${REDIS_NAME}-redis
     endpoints:
     - port: redis-exporter
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: ${REDIS_NAME}
+    name: ${REDIS_NAME}-redis
     labels:
-      app: ${REDIS_NAME}
+      app: ${REDIS_NAME}-redis
   spec:
     replicas: 1
     selector:
       matchLabels:
-        app: ${REDIS_NAME}
+        app: ${REDIS_NAME}-redis
     template:
       metadata:
         annotations:
           prometheus.io/scrape: "true"
           prometheus.io/port: "9121"
         labels:
-            app: ${REDIS_NAME}
+            app: ${REDIS_NAME}-redis
       spec:
         containers:
-        - name: ${REDIS_NAME}
+        - name: redis
           image: docker.io/redis:6
           imagePullPolicy: IfNotPresent
           command:
@@ -120,7 +120,7 @@ objects:
           - name: REDIS_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: redis-secret
+                name: ${REDIS_NAME}-redis-secret
                 key: redis-password
           - name: REDIS_ADDR
             value: "localhost:6379"
@@ -133,10 +133,10 @@ objects:
         volumes:
           - name: data
             persistentVolumeClaim:
-              claimName: ${REDIS_NAME}-data
+              claimName: ${REDIS_NAME}-redis-data
           - name: config
             secret:
-              secretName: ${REDIS_NAME}-secret
+              secretName: ${REDIS_NAME}-redis-secret
               items:
               - key: redis-config
                 path: redis.conf
