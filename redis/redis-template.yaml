@@ -9,6 +9,11 @@ categories:
 - redis
 
 parameters:
+- name: REDIS_NAME
+  displayName: redis_name
+  description: redis instnace name
+  value: my-redis
+  required: true
 - name: REDIS_PASSWORD
   displayName: redis_password
   description: redis password
@@ -19,7 +24,7 @@ objects:
 - apiVersion: v1
   kind: Secret
   metadata:
-    name: redis-secret
+    name: ${REDIS_NAME}-secret
   type: Opaque
   stringData:
     redis-config: |
@@ -35,7 +40,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: redis-data
+    name: ${REDIS_NAME}-data
   spec:
     accessModes: [ "ReadWriteOnce" ]
     resources:
@@ -44,12 +49,12 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
-    name: redis-service
+    name: ${REDIS_NAME}-service
     labels:
-      app: redis
+      app: ${REDIS_NAME}
   spec:
     selector:
-      app: redis
+      app: ${REDIS_NAME}
     ports:
     - name: redis
       protocol: TCP
@@ -62,37 +67,37 @@ objects:
 - apiVersion: monitoring.coreos.com/v1
   kind: ServiceMonitor
   metadata:
-    name: redis
+    name: ${REDIS_NAME}
     labels:
-      app: redis
+      app: ${REDIS_NAME}
       release: prometheus
   spec:
     selector:
       matchLabels:
-        app: redis
+        app: ${REDIS_NAME}
     endpoints:
     - port: redis-exporter
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: redis
+    name: ${REDIS_NAME}
     labels:
-      app: redis
+      app: ${REDIS_NAME}
   spec:
     replicas: 1
     selector:
       matchLabels:
-        app: redis
+        app: ${REDIS_NAME}
     template:
       metadata:
         annotations:
           prometheus.io/scrape: "true"
           prometheus.io/port: "9121"
         labels:
-            app: redis
+            app: ${REDIS_NAME}
       spec:
         containers:
-        - name: redis
+        - name: ${REDIS_NAME}
           image: docker.io/redis:6
           imagePullPolicy: IfNotPresent
           command:
@@ -128,10 +133,10 @@ objects:
         volumes:
           - name: data
             persistentVolumeClaim:
-              claimName: redis-data
+              claimName: ${REDIS_NAME}-data
           - name: config
             secret:
-              secretName: redis-secret
+              secretName: ${REDIS_NAME}-secret
               items:
               - key: redis-config
                 path: redis.conf
