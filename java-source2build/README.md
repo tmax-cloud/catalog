@@ -60,12 +60,12 @@
 * USR_SECRET_NAME
   * **private repository**일 경우에만 입력
   * private repository를 git clone 하기위한 token 정보를 포함한 시크릿의 이름
-  * 위의 Prerequisites: Case 2-2 참조
+  * 위의 Prerequisites: Case 2-1 참조
   
 * GIT_ID
   * **private repository**일 경우에만 입력
   * github의 user ID
-  * Prerequisites: Case 2-1 참조
+  * Prerequisites: Case 2-2 참조
 
 * USR_BUILD_CMD
   * 빌드 시 필요한 command
