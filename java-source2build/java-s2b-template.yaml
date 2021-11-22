@@ -1,7 +1,7 @@
 apiVersion: tmax.io/v1
 kind: ClusterTemplate
 metadata:
-  name: secret-java-s2b-template
+  name: java-s2b-template
 categories:
 - source2build
 - java
@@ -22,14 +22,14 @@ objects:
     replicas: 1
     selector:
       matchLabels:
-        app: secret-java-s2b
+        app: java-s2b
     template:
       metadata:
         labels:
-          app: secret-java-s2b
+          app: java-s2b
       spec:
         containers:
-        - name: secret-java-s2b-container
+        - name: java-s2b-container
           image: tmaxcloudck/source2build:v2.0
           imagePullPolicy: IfNotPresent
           env:
