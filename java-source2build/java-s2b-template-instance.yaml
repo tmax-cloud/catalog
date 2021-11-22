@@ -11,10 +11,10 @@ spec:
       value: "java-s2b-test-pod" 
     - name: GIT_REPO
       value: "https://github.com/ElenaSihyungLee/privateRepo.git"
-    - name: GIT_TOKEN
-      value: "abcdefghijklmnopqrstq1234567890"
+    - name: USR_SECRET_NAME
+      value: "mygittoken"
     - name: GIT_ID
-      value: "ElenaSihyungLee"
+      value: "sihyung823"
     - name: USR_BUILD_CMD
       value: "mvn compile; mvn package; mvn install;"
     - name: USR_RUN_CMD

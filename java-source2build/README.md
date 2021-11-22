@@ -15,7 +15,7 @@
   
     ![image](figure/public_repo.png)
   
-  * Case 2. 사용자의 git repository 가 private 인 경우 (Token 필요)
+  * Case 2. 사용자의 git repository 가 **private** 인 경우 (Token 필요)
    
     ![image](figure/private_repo_1.png)
 
@@ -29,9 +29,19 @@
 
     ![image](figure/private_repo_6.png)
 
-    * Case 2-1. github의 user ID
+    * Case 2-1. git token을 secret으로 생성
+    <br><br/>
+    hypercloud > 콘솔(마스터클러스터) > 워크로드(시크릿) > 키/값 시크릿 생성 > 시크릿 이름/키/값 입력 
+    <br><br/>
+    **키 값은 꼭 git-token 으로 입력하셔야 합니다**
+    <br><br/>
+    
+       ![image](figure/하이퍼클라우드_시크릿.png)
+
+    * Case 2-2. github의 user ID
   
       ![image](figure/userID.png)
+
 
 ## GUI 생성 가이드
 
@@ -47,15 +57,15 @@
   * 사용자의 git repository 
   * 위의 Prerequisites: Case 1 참조
   
-* GIT_TOKEN
+* USR_SECRET_NAME
   * **private repository**일 경우에만 입력
-  * private repository를 git clone 하기위한 token
-  * 위의 Prerequisites: Case 2 참조
+  * private repository를 git clone 하기위한 token 정보를 포함한 시크릿의 이름
+  * 위의 Prerequisites: Case 2-1 참조
   
 * GIT_ID
   * **private repository**일 경우에만 입력
   * github의 user ID
-  * Prerequisites: Case 2-1 참조
+  * 위의 Prerequisites: Case 2-2 참조
 
 * USR_BUILD_CMD
   * 빌드 시 필요한 command
@@ -70,3 +80,4 @@
   * ex) 
 
     ![image](figure/run_cmd_example.png)
+
