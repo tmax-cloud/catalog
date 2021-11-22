@@ -29,7 +29,7 @@
 
     ![image](figure/private_repo_6.png)
 
-    * Case 2-2. git token을 secret으로 생성
+    * Case 2-1. git token을 secret으로 생성
     <br><br/>
     hypercloud > 콘솔(마스터클러스터) > 워크로드(시크릿) > 키/값 시크릿 생성 > 시크릿 이름/키/값 입력 
     <br><br/>
@@ -38,7 +38,7 @@
     
        ![image](figure/하이퍼클라우드_시크릿.png)
 
-    * Case 2-1. github의 user ID
+    * Case 2-2. github의 user ID
   
       ![image](figure/userID.png)
 
