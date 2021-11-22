@@ -1,7 +1,7 @@
 apiVersion: tmax.io/v1
 kind: ClusterTemplate
 metadata:
-  name: java-s2b-template
+  name: secret-java-s2b-template
 categories:
 - source2build
 - java
@@ -22,21 +22,24 @@ objects:
     replicas: 1
     selector:
       matchLabels:
-        app: java-s2b
+        app: secret-java-s2b
     template:
       metadata:
         labels:
-          app: java-s2b
+          app: secret-java-s2b
       spec:
         containers:
-        - name: java-s2b-container
-          image: tmaxcloudck/source2build:v1.1
+        - name: secret-java-s2b-container
+          image: tmaxcloudck/source2build:v2.0
           imagePullPolicy: IfNotPresent
           env:
           - name: GIT_REPO
             value: ${GIT_REPO}
-          - name: GIT_TOKEN
-            value: ${GIT_TOKEN}
+          - name: USR_SECRET_NAME
+            valueFrom:
+              secretKeyRef:
+                name: ${USR_SECRET_NAME}
+                key: git-token
           - name: GIT_ID
             value: ${GIT_ID}
           - name: USR_BUILD_CMD
@@ -56,13 +59,13 @@ parameters:
   name: GIT_REPO
   required: true
   valueType: string
-- description: git token for private repository
-  displayName: GIT_TOKEN
-  name: GIT_TOKEN
+- description: secret name containing git token for a private repository
+  displayName: USR_SECRET_NAME
+  name: USR_SECRET_NAME
   required: false
   value: ""
   valueType: string
-- description: git user id for private repository
+- description: git user id for a private repository
   displayname: GIT_ID
   name: GIT_ID
   required: false
