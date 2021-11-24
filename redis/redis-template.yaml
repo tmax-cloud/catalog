@@ -12,7 +12,7 @@ parameters:
 - name: REDIS_NAME
   displayName: redis_name
   description: redis instnace name
-  value: my-redis
+  value: tmax
   required: true
 - name: REDIS_PASSWORD
   displayName: redis_password

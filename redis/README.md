@@ -46,3 +46,7 @@
 - Redis Exporter
   - https://github.com/oliver006/redis_exporter/blob/master/contrib/grafana_prometheus_redis_dashboard.json
   * 비고 : ${DS_PROMETHEUS}를 prometheus로 치환해야 함
+
+## Redis Insight 적용
+- Redis Insight
+  - [redis-insight-template](../redis-insight/) 참고

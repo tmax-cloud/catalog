@@ -8,5 +8,7 @@ spec:
     metadata:
       name: redis-template
     parameters:
+    - name: REDIS_NAME
+      value: "tmax"
     - name: REDIS_PASSWORD
       value: "mypassword"

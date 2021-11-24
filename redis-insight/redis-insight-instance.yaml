@@ -1,0 +1,14 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: redis-insight-template-instance
+  namespace: redis
+spec:
+  clustertemplate:
+    metadata:
+      name: redis-insight-template
+    parameters:
+    - name: REDIS_INSIGHT_NAME
+      value: "tmax"
+    - name: SERVICE_TYPE
+      value: "NodePort"

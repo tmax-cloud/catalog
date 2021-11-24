@@ -1,0 +1,73 @@
+apiVersion: tmax.io/v1
+kind: ClusterTemplate
+metadata:
+  name: redis-insight-template
+shortDescription: "Redis Template with exporter"
+urlDescription: "https://redis.com/redis-enterprise/redis-insight/"
+provider: tmax
+categories:
+- redis
+
+parameters:
+- name: REDIS_INSIGHT_NAME
+  displayName: redis_insight_name
+  description: redis insight name
+  value: tmax
+  required: true
+- name: SERVICE_TYPE
+  displayName: service_type
+  description: service type (ClusterIP, NodePort, LoadBalancer)
+  value: NodePort
+  required: true
+
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${REDIS_INSIGHT_NAME}-redis-insight-service
+  spec:
+    type: ${SERVICE_TYPE}
+    ports:
+      - port: 80
+        targetPort: 8001
+    selector:
+      app: ${REDIS_INSIGHT_NAME}-redis-insight
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: ${REDIS_INSIGHT_NAME}-redis-insight-data
+  spec:
+    accessModes: [ "ReadWriteOnce" ]
+    resources:
+      requests:
+        storage: 500Mi
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: ${REDIS_INSIGHT_NAME}-redis-insight
+    labels:
+      app: ${REDIS_INSIGHT_NAME}-redis-insight
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: ${REDIS_INSIGHT_NAME}-redis-insight
+    template:
+      metadata:
+        labels:
+          app: ${REDIS_INSIGHT_NAME}-redis-insight
+      spec:
+        containers:
+        - name:  redisinsight
+          image: redislabs/redisinsight:latest
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: db
+            mountPath: /db
+          ports:
+          - containerPort: 8001
+            protocol: TCP
+        volumes:
+        - name: db
+          persistentVolumeClaim:
+            claimName: ${REDIS_INSIGHT_NAME}-redis-insight-data
