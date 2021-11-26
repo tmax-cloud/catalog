@@ -2,19 +2,22 @@ apiVersion: tmax.io/v1
 kind: TemplateInstance
 metadata:
   name: java-s2b-templateinstance
+  namespace: shlee
 spec:
   clustertemplate:
     metadata:
-      name: java-s2b-clustertemplate
+      name: java-s2b-template
     parameters:
     - name: POD_NAME
-      value: "java-s2b-test-pod" 
+      value: "java-s2b-pod" 
     - name: GIT_REPO
-      value: "https://github.com/ElenaSihyungLee/privateRepo.git"
+      value: "https://gitlab.com/sihyunglee823/gitlab-test-private.git"
     - name: USR_SECRET_NAME
-      value: "mygittoken"
-    - name: GIT_ID
-      value: "sihyung823"
+      value: "gitlab-token"
+    - name: GITHUB_ID
+      value: ""
+    - name: GITLAB_TOKEN_NAME
+      value: "mytoken"
     - name: USR_BUILD_CMD
       value: "mvn compile; mvn package; mvn install;"
     - name: USR_RUN_CMD
