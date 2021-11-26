@@ -1,0 +1,17 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: nginx-template-instance
+spec:
+  clustertemplate:
+    metadata:
+      name: nginx-only-template
+    parameters:
+    - name: NGINX_HOST
+      value: foo.com
+    - name: SERVICE_TYPE
+      value: LoadBalancer
+    - name: RESOURCE_CPU
+      value: 500m
+    - name: RESOURCE_MEM
+      value: 500Mi

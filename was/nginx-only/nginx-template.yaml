@@ -1,0 +1,77 @@
+apiVersion: tmax.io/v1
+kind: ClusterTemplate
+metadata:
+  name: nginx-only-template
+  annotations:
+    template-version: 5.0.4
+    tested-operator-version: 0.2.1
+  labels:
+    template-was: nginx-only
+imageUrl: https://commons.wikimedia.org/wiki/File:Nginx-logo.png#/media/File:Nginx-logo.png
+provider: tmax
+recommend: false
+shortDescription: Nginx Template
+longDescription: Nginx Template for catalog museum
+urlDescription: https://www.nginx.com/resources/wiki/
+categories:
+- was
+- nginx-only
+
+parameters:
+- name: NGINX_HOST
+  displayName: HostName
+  description: Nginx Host(server) Name
+  required: true
+- name: SERVICE_TYPE
+  displayName: ServiceType
+  description: Service Type (ClusterIP/NodePort/LoadBalancer)
+  required: true
+- name: RESOURCE_CPU
+  displayName: DeployResourceCpu
+  description: Deployment resource (cpu)
+  required: true
+- name: RESOURCE_MEM
+  displayName: DeployResourceMem
+  description: Deployment resource (mem)
+  required: true
+
+objects:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: nginx-deploy
+  spec:
+    replicas : 1
+    selector:
+      matchLabels:
+        app: nginx
+    template:
+      metadata:
+        labels:
+          app: nginx
+      spec:
+        containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: NGINX_HOST
+              value: ${NGINX_HOST}
+          resources:
+            requests:
+              cpu: ${RESOURCE_CPU}
+              memory: ${RESOURCE_MEM}
+
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: nginx-service
+  spec:
+    type: ${SERVICE_TYPE}
+    selector:
+      app: nginx
+    ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
