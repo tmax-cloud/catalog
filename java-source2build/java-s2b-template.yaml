@@ -1,7 +1,7 @@
 apiVersion: tmax.io/v1
 kind: ClusterTemplate
 metadata:
-  name: java-s2b-template
+  name: gitlab-java-s2b-template
 categories:
 - source2build
 - java
@@ -17,21 +17,27 @@ objects:
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: ${POD_NAME}
+    name: ${POD_NAME}-java-s2b
+    labels:
+      app: ${POD_NAME}-java-s2b
   spec:
     replicas: 1
     selector:
       matchLabels:
-        app: java-s2b
+        app: ${POD_NAME}-java-s2b
     template:
       metadata:
         labels:
-          app: java-s2b
+          app: ${POD_NAME}-java-s2b
       spec:
         containers:
-        - name: java-s2b-container
-          image: tmaxcloudck/source2build:v3.0
+        - name: gitlab-java-s2b-container
+          image: sihyung823/test-repo:v1.5
           imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 9090
+          - containerPort: 80
+          - containerPort: 8080
           env:
           - name: GIT_REPO
             value: ${GIT_REPO}
@@ -48,6 +54,30 @@ objects:
             value: ${USR_BUILD_CMD}
           - name: USR_RUN_CMD
             value: ${USR_RUN_CMD}
+
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${POD_NAME}-java-s2b-svc
+    labels:
+      app: ${POD_NAME}-java-s2b
+  spec:
+    selector:
+      app: ${POD_NAME}-java-s2b
+    type: NodePort
+    ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: apach
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: nginx
+    - port: 9090
+      targetPort: 9090
+      protocol: TCP
+      name: http
 
 parameters:
 - description: pod name
