@@ -1,7 +1,7 @@
 apiVersion: tmax.io/v1
 kind: ClusterTemplate
 metadata:
-  name: gitlab-java-s2b-template
+  name: java-s2b-template
 categories:
 - source2build
 - java
@@ -31,8 +31,8 @@ objects:
           app: ${POD_NAME}-java-s2b
       spec:
         containers:
-        - name: gitlab-java-s2b-container
-          image: sihyung823/test-repo:v1.5
+        - name: java-s2b-container
+          image: tmaxcloudck/source2build:v3.0
           imagePullPolicy: IfNotPresent
           ports:
           - containerPort: 9090
@@ -91,18 +91,18 @@ parameters:
   name: GIT_REPO
   required: true
   valueType: string
-- description: secret name containing git token for a private repository
+- description: secret name containing git access token
   displayName: USR_SECRET_NAME
   name: USR_SECRET_NAME
-  required: false
+  required: true
   value: ""
   valueType: string
-- description: github user id for a private repository
+- description: github user id for a github private repository
   displayname: GITHUB_ID
   name: GITHUB_ID
   required: false
   value: ""
-- description: gitlab token name for a private project
+- description: gitlab token name for a gitlab private project
   displayname: GITLAB_TOKEN_NAME
   name: GITLAB_TOKEN_NAME
   required: false
