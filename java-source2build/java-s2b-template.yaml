@@ -17,21 +17,27 @@ objects:
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: ${POD_NAME}
+    name: ${POD_NAME}-java-s2b
+    labels:
+      app: ${POD_NAME}-java-s2b
   spec:
     replicas: 1
     selector:
       matchLabels:
-        app: java-s2b
+        app: ${POD_NAME}-java-s2b
     template:
       metadata:
         labels:
-          app: java-s2b
+          app: ${POD_NAME}-java-s2b
       spec:
         containers:
         - name: java-s2b-container
-          image: tmaxcloudck/source2build:v2.0
+          image: tmaxcloudck/source2build:v4.0
           imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 9090
+          - containerPort: 80
+          - containerPort: 8080
           env:
           - name: GIT_REPO
             value: ${GIT_REPO}
@@ -40,12 +46,38 @@ objects:
               secretKeyRef:
                 name: ${USR_SECRET_NAME}
                 key: git-token
-          - name: GIT_ID
-            value: ${GIT_ID}
+          - name: GITHUB_ID
+            value: ${GITHUB_ID}
+          - name: GITLAB_TOKEN_NAME
+            value: ${GITLAB_TOKEN_NAME}
           - name: USR_BUILD_CMD
             value: ${USR_BUILD_CMD}
           - name: USR_RUN_CMD
             value: ${USR_RUN_CMD}
+
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${POD_NAME}-java-s2b-svc
+    labels:
+      app: ${POD_NAME}-java-s2b
+  spec:
+    selector:
+      app: ${POD_NAME}-java-s2b
+    type: NodePort
+    ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: apach
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: nginx
+    - port: 9090
+      targetPort: 9090
+      protocol: TCP
+      name: http
 
 parameters:
 - description: pod name
@@ -59,15 +91,20 @@ parameters:
   name: GIT_REPO
   required: true
   valueType: string
-- description: secret name containing git token for a private repository
+- description: secret name containing git access token
   displayName: USR_SECRET_NAME
   name: USR_SECRET_NAME
-  required: false
+  required: true
   value: ""
   valueType: string
-- description: git user id for a private repository
-  displayname: GIT_ID
-  name: GIT_ID
+- description: github user id for a github private repository
+  displayname: GITHUB_ID
+  name: GITHUB_ID
+  required: false
+  value: ""
+- description: gitlab token name for a gitlab private project
+  displayname: GITLAB_TOKEN_NAME
+  name: GITLAB_TOKEN_NAME
   required: false
   value: ""
 - description: user build command
@@ -80,4 +117,5 @@ parameters:
   name: USR_RUN_CMD
   required: true
   valueType: string
+
 

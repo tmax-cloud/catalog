@@ -11,25 +11,53 @@
 
 * java-source2build 사용하기 전 아래의 과정을 통해 사용자의 git repository 정보를 준비한다.
 
-  * Case 1. 사용자의 git repository 가 public 인 경우
+  * Case 1. GitHub
+   <br><br/>
+    * github repository 정보
+      ![image](figure/public_repo.png)
+    <br><br/>
   
-    ![image](figure/public_repo.png)
-  
-  * Case 2. 사용자의 git repository 가 **private** 인 경우 (Token 필요)
+    * github access token 발급
    
-    ![image](figure/private_repo_1.png)
+      ![image](figure/private_repo_1.png)
 
-    ![image](figure/private_repo_2.png)
+      ![image](figure/private_repo_2.png)
 
-    ![image](figure/private_repo_3.png)
+      ![image](figure/private_repo_3.png)
 
-    ![image](figure/private_repo_4.png)
+      ![image](figure/private_repo_4.png)
 
-    ![image](figure/private_repo_5.png)
+      ![image](figure/private_repo_5.png)
 
-    ![image](figure/private_repo_6.png)
+      ![image](figure/private_repo_6.png)
 
-    * Case 2-1. git token을 secret으로 생성
+    * github user ID 
+
+      ![image](figure/userID.png)
+
+  * Case 2. GitLab
+   <br><br/>
+    * gitlab repository 정보
+      
+      ![image](figure/gitlab-repo.png)
+    <br><br/>
+  
+    * gitlab access token 발급
+   
+      ![image](figure/gitlab-token_1.png)
+
+      ![image](figure/gitlab-token_2.png)
+
+      ![image](figure/gitlab-token_3.png)
+
+    * gitlab token name 
+
+      ![image](figure/gitlab-token-name.png)
+
+
+## GUI 생성 가이드
+
+  * git token을 secret으로 생성
     <br><br/>
     hypercloud > 콘솔(마스터클러스터) > 워크로드(시크릿) > 키/값 시크릿 생성 > 시크릿 이름/키/값 입력 
     <br><br/>
@@ -38,14 +66,11 @@
     
        ![image](figure/하이퍼클라우드_시크릿.png)
 
-    * Case 2-2. github의 user ID
-  
-      ![image](figure/userID.png)
 
-
-## GUI 생성 가이드
-
-콘솔(개발자) > 서비스카탈로그(템플릿 인스턴스) > 템플릿 인스턴스 유형(클러스터 템플릿) > 템플릿(java-s2b-template)
+  * 템플릿 생성
+    <br><br/>
+    콘솔(개발자) > 서비스카탈로그(템플릿 인스턴스) > 템플릿 인스턴스 유형(클러스터 템플릿) > 템플릿(java-s2b-template)
+    <br><br/>
 
 ### Parameter 설명
 
@@ -55,17 +80,22 @@
   
 * GIT_REPO
   * 사용자의 git repository 
-  * 위의 Prerequisites: Case 1 참조
+  * 위의 Prerequisites: Case 1 - github repo & Case 2 - gitlab repo 참조
   
 * USR_SECRET_NAME
-  * **private repository**일 경우에만 입력
-  * private repository를 git clone 하기위한 token 정보를 포함한 시크릿의 이름
-  * 위의 Prerequisites: Case 2-1 참조
+  * git clone 하기위한 token 정보를 포함한 시크릿의 이름
+  * 위의 GUI 생성 가이드 참조
+  * **public & private repository 상관없이 모두 입력 하셔야 합니다.**
   
-* GIT_ID
+* GITHUB_ID
   * **private repository**일 경우에만 입력
   * github의 user ID
-  * 위의 Prerequisites: Case 2-2 참조
+  * 위의 Prerequisites: Case 1 - github user ID 참조
+
+* GITLAB_TOKEN_NAME
+  * **private repository**일 경우에만 입력
+  * gitlab의 token name
+  * 위의 Prerequisites: Case 2 - gitlab token name 참조
 
 * USR_BUILD_CMD
   * 빌드 시 필요한 command
