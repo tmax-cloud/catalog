@@ -9,7 +9,7 @@ spec:
       name: java-s2b-template
     parameters:
     - name: POD_NAME
-      value: "gitlab-java-s2b-pod" 
+      value: "java-s2b-pod" 
     - name: GIT_REPO
       value: "https://gitlab.com/sihyunglee823/springtest.git"
     - name: USR_SECRET_NAME
