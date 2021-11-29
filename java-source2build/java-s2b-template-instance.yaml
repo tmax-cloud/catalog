@@ -1,12 +1,12 @@
 apiVersion: tmax.io/v1
 kind: TemplateInstance
 metadata:
-  name: gitlab-java-s2b-templateinstance
+  name: java-s2b-templateinstance
   namespace: shlee
 spec:
   clustertemplate:
     metadata:
-      name: gitlab-java-s2b-template
+      name: java-s2b-template
     parameters:
     - name: POD_NAME
       value: "gitlab-java-s2b-pod" 
