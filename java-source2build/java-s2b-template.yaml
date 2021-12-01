@@ -32,7 +32,7 @@ objects:
       spec:
         containers:
         - name: java-s2b-container
-          image: tmaxcloudck/source2build:v4.0
+          image: tmaxcloudck/source2build:v4.1
           imagePullPolicy: IfNotPresent
           ports:
           - containerPort: 9090
