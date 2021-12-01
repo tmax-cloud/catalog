@@ -102,11 +102,13 @@ parameters:
   name: GITHUB_ID
   required: false
   value: ""
+  valueType: string
 - description: gitlab token name for a gitlab private project
   displayname: GITLAB_TOKEN_NAME
   name: GITLAB_TOKEN_NAME
   required: false
   value: ""
+  valueType: string
 - description: user build command
   displayName: USR_BUILD_CMD
   name: USR_BUILD_CMD
