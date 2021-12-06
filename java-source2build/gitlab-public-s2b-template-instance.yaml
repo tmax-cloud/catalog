@@ -1,7 +1,7 @@
 apiVersion: tmax.io/v1
 kind: TemplateInstance
 metadata:
-  name: java-s2b-template-instance
+  name: gitlab-public-s2b-templateinstance
   namespace: shlee
 spec:
   clustertemplate:
@@ -9,16 +9,18 @@ spec:
       name: java-s2b-template
     parameters:
     - name: POD_NAME
-      value: "java-s2b-pod" 
+      value: "gitlab-public-s2b-pod" 
     - name: GIT_REPO
-      value: "https://gitlab.com/sihyunglee823/springtest.git"
+      value: "https://gitlab.com/sihyunglee823/gitlab-test-public.git"
     - name: USR_SECRET_NAME
-      value: "gitaccesstoken"
+      value: ""
     - name: GITHUB_ID
       value: ""
     - name: GITLAB_TOKEN_NAME
       value: ""
     - name: USR_BUILD_CMD
-      value: "gradle init; gradle build;"
+      value: "mvn clean; mvn compile; mvn package; mvn install;"
     - name: USR_RUN_CMD
-      value: "gradle bootRun;"
+      value: "java -cp target/jb-hello-world-maven-0.1.0.jar hello.HelloWorld;"
+    - name: USR_NAMESPACE
+      value: ""
