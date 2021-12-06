@@ -1,0 +1,223 @@
+apiVersion: tmax.io/v1
+kind: ClusterTemplate
+metadata:
+  name: keycloak-standalone-template
+shortDescription: "Keycloak Standalone Deployment"
+longDescription: "Keycloak Standalone Deployment With Postgresql" 
+urlDescription: https://www.keycloak.org
+imageUrl: "https://design.jboss.org/keycloak/logo/images/keycloak_upstream_spotlight_500x400.png"
+provider: tmax
+categories:
+- keycloak
+- oidc
+- sso
+- authentication
+parameters:
+- name: APP_NAME
+  displayName: AppName
+  description: A Keycloak Name
+  required: true
+- name: KEYCLOAK_VERSION
+  displayName: KeycloakImageVersion
+  description: Keycloak Container Image Version Based on https://quay.io/repository/keycloak/keycloak?tab=tags
+  value: 11.0.2
+  required: true    
+- name: KEYCLOAK_STORAGE
+  displayName: Keycloak Storage
+  description: Keycloak Storage size
+  value: 5Gi
+  required: true
+- name: STORAGE_CLASS
+  displayName: StorageClass
+  description: Storage class name
+  value: csi-cephfs-sc
+  required: true
+- name: KEYCLOAK_RESOURCE_CPU
+  displayName: KeycloakResourceCPU
+  description: Keycloak Resource request, CPU (e.g., 1)
+  value: 1
+  required: true
+- name: KEYCLOAK_RESOURCE_MEM
+  displayName: KeycloakResourceMem
+  description: Keycloak Resource request, Mem (e.g., 1Gi)
+  value: 1Gi
+  required: true
+- name: POSTGRESQL_RESOURCE_CPU
+  displayName: PostgresqlResourceCPU
+  description: Postgresql Resource request, CPU (e.g., 1)
+  value: 1
+  required: true
+- name: POSTGRESQL_RESOURCE_MEM
+  displayName: PostgresqlResourceMem
+  description: Postgresql Resource request, Mem (e.g., 1Gi)
+  value: 1Gi
+  required: true                    
+objects:
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: ${APP_NAME}-passwords
+  type: Opaque
+  data:
+    KEYCLOAK_PASSWORD: YWRtaW4=
+    KEYCLOAK_ADMIN: YWRtaW4=
+    DB_PASSWORD: a2V5Y2xvYWs=
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: ${APP_NAME}-postgres-pvc
+    labels:
+      app: ${APP_NAME}-postgresql
+  spec:
+    storageClassName: ${STORAGE_CLASS}
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: ${KEYCLOAK_STORAGE}   
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APP_NAME}-postgresql
+    labels:
+      app: ${APP_NAME}-postgresql
+  spec:
+    ports:
+    - port: 5432
+    selector:
+      app: ${APP_NAME}-postgresql
+      tier: ${APP_NAME}-postgreSQL
+    type: ClusterIP
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: ${APP_NAME}-postgresql
+    labels:
+      app: ${APP_NAME}-postgresql
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: ${APP_NAME}-postgresql
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: ${APP_NAME}-postgresql
+          tier: ${APP_NAME}-postgreSQL
+      spec:
+        containers:
+          - image: postgres:9.6.2-alpine
+            name: postgresql
+            env:
+              - name: POSTGRES_USER
+                value: keycloak
+              - name: POSTGRES_DB
+                value: keycloak
+              - name: POSTGRES_PASSWORD
+                valueFrom:
+                secretKeyRef:
+                  name: ${APP_NAME}-passwords
+                  key: DB_PASSWORD
+              - name: TZ
+                value: Asia/Seoul
+            resources:
+              limits:
+                cpu: ${POSTGRESQL_RESOURCE_CPU}
+                memory: ${POSTGRESQL_RESOURCE_MEM}
+              requests:
+                cpu: ${POSTGRESQL_RESOURCE_CPU}
+                memory: ${POSTGRESQL_RESOURCE_MEM}
+            ports:
+              - containerPort: 5432
+                name: postgresql
+            volumeMounts:
+              - name: postgresql
+                mountPath: /var/lib/postgresql/data
+                subPath: postgres
+        volumes:
+          - name: postgresql
+            persistentVolumeClaim:
+              claimName: ${APP_NAME}-postgres-pvc
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APP_NAME}-keycloak
+    labels:
+      app: ${APP_NAME}-keycloak
+  spec:
+    ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+    - name: https
+      port: 443
+      targetPort: 8443
+    selector:
+      app: ${APP_NAME}-keycloak
+    type: LoadBalancer   # ClusterIP or LoadBalancer or NodePort
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: ${APP_NAME}-keycloak
+    labels:
+      app: ${APP_NAME}-keycloak
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: ${APP_NAME}-keycloak
+    template:
+      metadata:
+        labels:
+          app: ${APP_NAME}-keycloak
+      spec:
+#        serviceAccount: hyperauth-admin
+        containers:
+        - name: ${APP_NAME}-keycloak
+          image: quay.io/keycloak/keycloak:${KEYCLOAK_VERSION}
+          env:
+          - name: KEYCLOAK_USER
+            valueFrom:
+              secretKeyRef:
+                name: ${APP_NAME}-passwords
+                key: KEYCLOAK_ADMIN
+          - name: KEYCLOAK_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: ${APP_NAME}-passwords
+                key: KEYCLOAK_PASSWORD
+          - name: PROXY_ADDRESS_FORWARDING
+            value: "true"
+          - name: DB_VENDOR     # postgres / tibero
+            value: "postgres"     
+          - name: DB_PORT       # postgres : 31226, tibero : 32571
+            value: "5432"     
+          - name: DB_ADDR
+            value: ${APP_NAME}-postgresql
+          - name: DB_USER
+            value: "keycloak"
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: ${APP_NAME}-passwords
+                key: DB_PASSWORD 
+          - name: TZ
+            value: Asia/Seoul
+          ports:
+          - name: http
+            containerPort: 8080
+          - name: https
+            containerPort: 8443
+          readinessProbe:
+            httpGet:
+              path: /auth/realms/master
+              port: 8080
+          resources:
+            limits:
+              cpu: ${KEYCLOAK_RESOURCE_CPU}
+              memory: ${KEYCLOAK_RESOURCE_MEM}
+            requests:
+              cpu: ${KEYCLOAK_RESOURCE_CPU}
+              memory: ${KEYCLOAK_RESOURCE_MEM}

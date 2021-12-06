@@ -1,0 +1,29 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: keycloak-template-instance1
+  namespace: keycloak
+  annotations:
+    template-version: 5.0.4
+    tested-operator-version: 0.2.1
+spec:
+  clustertemplate:
+    metadata:
+      name: keycloak-standalone-template
+    parameters:
+    - name: APP_NAME
+      value: keycloak-test1
+    - name: KEYCLOAK_VERSION
+      value: 11.0.2
+    - name: KEYCLOAK_STORAGE
+      value: 5Gi
+    - name: STORAGE_CLASS
+      value: csi-cephfs-sc
+    - name: KEYCLOAK_RESOURCE_CPU
+      value: 1
+    - name: KEYCLOAK_RESOURCE_MEM
+      value: 1Gi
+    - name: POSTGRESQL_RESOURCE_CPU
+      value: 1
+    - name: POSTGRESQL_RESOURCE_MEM
+      value: 1Gi
