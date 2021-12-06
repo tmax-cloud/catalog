@@ -30,10 +30,31 @@ objects:
         labels:
           app: ${POD_NAME}-java-s2b
       spec:
+        serviceAccountName: ${POD_NAME}-s2b-account
+        initContainers:
+        - command:
+          - /bin/bash
+          - -c
+          - -x
+          - |
+            SECRET="${USR_SECRET_NAME}"
+            if [[ "$SECRET" != "" ]]; then
+              kubectl get secret ${USR_SECRET_NAME} -n ${USR_NAMESPACE} -o jsonpath='{.data}' > /secret/usr_secret
+            fi
+          image: docker.io/bitnami/kubectl:1.20.10
+          imagePullPolicy: IfNotPresent
+          name: create-secret-for-private
+          volumeMounts:
+          - name: git-token
+            mountPath: /secret
+          
         containers:
         - name: java-s2b-container
-          image: tmaxcloudck/source2build:v4.0
+          image: tmaxcloudck/source2build:v4.3
           imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: git-token
+            mountPath: /secret
           ports:
           - containerPort: 9090
           - containerPort: 80
@@ -41,11 +62,6 @@ objects:
           env:
           - name: GIT_REPO
             value: ${GIT_REPO}
-          - name: USR_SECRET_NAME
-            valueFrom:
-              secretKeyRef:
-                name: ${USR_SECRET_NAME}
-                key: git-token
           - name: GITHUB_ID
             value: ${GITHUB_ID}
           - name: GITLAB_TOKEN_NAME
@@ -54,7 +70,35 @@ objects:
             value: ${USR_BUILD_CMD}
           - name: USR_RUN_CMD
             value: ${USR_RUN_CMD}
-
+        volumes:
+        - name: git-token
+          emptyDir: {}
+- apiVersion: v1
+  kind: ServiceAccount
+  metadata:
+    name: ${POD_NAME}-s2b-account
+    namespace: ${USR_NAMESPACE}
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: Role
+  metadata:
+    name: secret-reader-s2b
+    namespace: ${USR_NAMESPACE}
+  rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: read-secrets-s2b
+    namespace: ${USR_NAMESPACE}
+  subjects:
+  - kind: ServiceAccount
+    name: ${POD_NAME}-s2b-account
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: Role
+    name: secret-reader-s2b
 - apiVersion: v1
   kind: Service
   metadata:
@@ -69,7 +113,7 @@ objects:
     - port: 80
       targetPort: 80
       protocol: TCP
-      name: apach
+      name: apache
     - port: 8080
       targetPort: 8080
       protocol: TCP
@@ -91,22 +135,24 @@ parameters:
   name: GIT_REPO
   required: true
   valueType: string
-- description: secret name containing git access token
+- description: secret name containing git token for a private repository
   displayName: USR_SECRET_NAME
   name: USR_SECRET_NAME
-  required: true
+  required: false
   value: ""
   valueType: string
-- description: github user id for a github private repository
+- description: github user id for a private repository
   displayname: GITHUB_ID
   name: GITHUB_ID
   required: false
   value: ""
-- description: gitlab token name for a gitlab private project
+  valueType: string
+- description: gitlab token name for a private project
   displayname: GITLAB_TOKEN_NAME
   name: GITLAB_TOKEN_NAME
   required: false
   value: ""
+  valueType: string
 - description: user build command
   displayName: USR_BUILD_CMD
   name: USR_BUILD_CMD
@@ -116,6 +162,12 @@ parameters:
   displayName: USR_RUN_CMD
   name: USR_RUN_CMD
   required: true
+  valueType: string
+- description: user namespace
+  display: USR_NAMESPACE
+  name: USR_NAMESPACE
+  required: false
+  value: ""
   valueType: string
 
 
