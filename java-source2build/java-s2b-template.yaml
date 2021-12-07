@@ -39,7 +39,7 @@ objects:
           - |
             SECRET="${USR_SECRET_NAME}"
             if [[ "$SECRET" != "" ]]; then
-              kubectl get secret ${USR_SECRET_NAME} -n ${USR_NAMESPACE} -o jsonpath='{.data}' > /secret/usr_secret
+              kubectl get secret ${USR_SECRET_NAME} -n $(USR_NAMESPACE) -o jsonpath='{.data}' > /secret/usr_secret
             fi
           image: docker.io/bitnami/kubectl:1.20.10
           imagePullPolicy: IfNotPresent
@@ -47,6 +47,11 @@ objects:
           volumeMounts:
           - name: git-token
             mountPath: /secret
+          env:
+          - name: USR_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
           
         containers:
         - name: java-s2b-container
@@ -77,12 +82,12 @@ objects:
   kind: ServiceAccount
   metadata:
     name: ${POD_NAME}-s2b-account
-    namespace: ${USR_NAMESPACE}
+    namespace: $(USR_NAMESPACE)
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: Role
   metadata:
     name: secret-reader-s2b
-    namespace: ${USR_NAMESPACE}
+    namespace: $(USR_NAMESPACE)
   rules:
   - apiGroups: [""]
     resources: ["secrets"]
@@ -91,7 +96,7 @@ objects:
   kind: RoleBinding
   metadata:
     name: read-secrets-s2b
-    namespace: ${USR_NAMESPACE}
+    namespace: $(USR_NAMESPACE)
   subjects:
   - kind: ServiceAccount
     name: ${POD_NAME}-s2b-account
@@ -141,13 +146,13 @@ parameters:
   required: false
   value: ""
   valueType: string
-- description: github user id for a private repository
+- description: github user id for a github private repository
   displayname: GITHUB_ID
   name: GITHUB_ID
   required: false
   value: ""
   valueType: string
-- description: gitlab token name for a private project
+- description: gitlab token name for a gitlab private project
   displayname: GITLAB_TOKEN_NAME
   name: GITLAB_TOKEN_NAME
   required: false
@@ -163,11 +168,3 @@ parameters:
   name: USR_RUN_CMD
   required: true
   valueType: string
-- description: user namespace
-  display: USR_NAMESPACE
-  name: USR_NAMESPACE
-  required: false
-  value: ""
-  valueType: string
-
-
