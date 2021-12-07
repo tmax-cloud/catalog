@@ -22,5 +22,3 @@ spec:
       value: "mvn clean; mvn compile; mvn package; mvn install;"
     - name: USR_RUN_CMD
       value: "java -cp target/jb-hello-world-maven-0.1.0.jar hello.HelloWorld;"
-    - name: USR_NAMESPACE
-      value: "shlee"

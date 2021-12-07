@@ -122,11 +122,3 @@
 
     ![image](figure/run_cmd_example.png)
 
-* USR_NAMESPACE
-  * **private repository**일 경우에만 입력
-  * 템플릿 인스턴스 / 서비스 인스턴스를 생성 할 네임스페이스
-  * namespace 입력시 **인스턴스 생성시 선택한 네임스페이스와 동일해야 합니다**
-  * ex)
-
-    ![image](figure/usr_namespace.png)
-
