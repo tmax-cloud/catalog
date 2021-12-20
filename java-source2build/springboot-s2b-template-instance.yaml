@@ -22,3 +22,9 @@ spec:
       value: "gradle init; gradle build;"
     - name: USR_RUN_CMD
       value: "gradle bootRun;"
+    - name: JDK_VERSION
+      value: "11"
+    - name: MVN_VERSION
+      value: ""
+    - name: GRADLE_VERSION
+      value: "7.2"

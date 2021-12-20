@@ -22,3 +22,9 @@ spec:
       value: "mvn clean; mvn compile; mvn package; mvn install;"
     - name: USR_RUN_CMD
       value: "java -cp target/jb-hello-world-maven-0.1.0.jar hello.HelloWorld;"
+    - name: JDK_VERSION
+      value: "12"
+    - name: MVN_VERSION
+      value: "3.2.3"
+    - name: GRADLE_VERSION
+      value: ""

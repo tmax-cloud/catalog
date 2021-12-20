@@ -1,10 +1,5 @@
 # java-source2build 사용 가이드
 
-## 구성 요소 및 버전
-* jdk-12 (https://www.oracle.com/java/technologies/javase/12-relnotes.html)
-* maven (https://maven.apache.org/docs/3.8.3/release-notes.html)
-* gradle (https://docs.gradle.org/7.2/release-notes.html)
-
 ## Prerequisites
 
 ### git repository
@@ -122,3 +117,21 @@
 
     ![image](figure/run_cmd_example.png)
 
+* JDK_VERSION
+  * 실행 시 필요한 JDK 버전
+  
+  * 지원가능 한 JDK 버전 : 9, 10, 11, 12, 13, 14, 15, 16, 17
+<br><br/>
+* MVN_VERSION
+  * 프로젝트 빌드 시 필요한 MAVEN 버전
+
+  * 지원가능 한 MAVEN 버전
+    - maven 1: https://archive.apache.org/dist/maven/maven-1/
+    - maven 2: https://archive.apache.org/dist/maven/maven-2/
+    - maven 3: https://archive.apache.org/dist/maven/maven-3/
+<br><br/>
+* GRADLE_VERSION
+  * 프로젝트 빌드 시 필요한 GRADLE 버전
+
+  * 지원가능 한 GRADLE 버전
+    - https://services.gradle.org/distributions/

@@ -52,18 +52,12 @@ objects:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.namespace
-          
-        containers:
-        - name: java-s2b-container
-          image: tmaxcloudck/source2build:v4.3
+        - name: s2b-build-container
+          image: tmaxcloudck/source2build:v5.0 
           imagePullPolicy: IfNotPresent
           volumeMounts:
           - name: git-token
             mountPath: /secret
-          ports:
-          - containerPort: 9090
-          - containerPort: 80
-          - containerPort: 8080
           env:
           - name: GIT_REPO
             value: ${GIT_REPO}
@@ -73,8 +67,30 @@ objects:
             value: ${GITLAB_TOKEN_NAME}
           - name: USR_BUILD_CMD
             value: ${USR_BUILD_CMD}
+          - name: JDK_VERSION
+            value: ${JDK_VERSION}
+          - name: MVN_VERSION
+            value: ${MVN_VERSION}
+          - name: GRADLE_VERSION
+            value: ${GRADLE_VERSION}
+        containers:
+        - name: s2b-run-container
+          image: tmaxcloudck/source2build:jre
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+          - name: git-token
+            mountPath: /secret
+          env:
           - name: USR_RUN_CMD
             value: ${USR_RUN_CMD}
+          - name: JDK_VERSION
+            value: ${JDK_VERSION}
+          - name: GRADLE_VERSION
+            value: ${GRADLE_VERSION}          
+          ports:
+          - containerPort: 9090
+          - containerPort: 80
+          - containerPort: 8080
         volumes:
         - name: git-token
           emptyDir: {}
@@ -127,7 +143,6 @@ objects:
       targetPort: 9090
       protocol: TCP
       name: http
-
 parameters:
 - description: pod name
   displayName: POD_NAME
@@ -141,7 +156,7 @@ parameters:
   required: true
   valueType: string
 - description: secret name containing git token for a private repository
-  displayName: USR_SECRET_NAME
+  displayName: USR_SECRET_NAME  
   name: USR_SECRET_NAME
   required: false
   value: ""
@@ -167,4 +182,22 @@ parameters:
   displayName: USR_RUN_CMD
   name: USR_RUN_CMD
   required: true
+  valueType: string
+- description: jdk version
+  diaplayName: JDK_VERSION
+  name: JDK_VERSION
+  required: false
+  value: 12
+  valueType: string
+- description: maven version
+  displayName: MVN_VERSION
+  name: MVN_VERSION
+  required: false
+  value: "3.8.3"
+  valueType: string
+- description: gradle version
+  displayName: GRADLE_VERSION
+  name: GRADLE_VERSION
+  required: false
+  value: "7.2"
   valueType: string
