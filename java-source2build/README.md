@@ -127,8 +127,10 @@
     - maven 1: https://archive.apache.org/dist/maven/maven-1/
     - maven 2: https://archive.apache.org/dist/maven/maven-2/
     - maven 3: https://archive.apache.org/dist/maven/maven-3/
+  * ex)  maven-3.8.3 버전을 원할 시 3.8.3 으로 입력하셔야 합니다 (**샘플 template instance 참조**)
 <br><br/>
 * GRADLE_VERSION
   * 프로젝트 빌드 시 필요한 GRADLE 버전
   * 지원가능 한 GRADLE 버전
     - https://services.gradle.org/distributions/
+  * ex)  gradle-7.2 버전을 원할 시 7.2 으로 입력하셔야 합니다 (**샘플 template instance 참조**)
