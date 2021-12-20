@@ -3,8 +3,8 @@ kind: ClusterTemplate
 metadata:
   name: tomcat-cicd-template
   annotations:
-    template-version: 5.0.4
-    tested-operator-version: 0.2.1
+    template-version: 5.0.5
+    tested-operator-version: 0.2.5
   labels:
     cicd-template-was: tomcat
 imageUrl: https://upload.wikimedia.org/wikipedia/commons/7/7b/Tomcat-logo.svg
@@ -199,7 +199,7 @@ objects:
         - git-checkout
       - name: deploy
         skipCheckout: true
-        image: docker.io/tmaxcloudck/cicd-util:5.0.4
+        image: docker.io/tmaxcloudck/cicd-util:5.0.5
         imagePullPolicy: Always
         env:
         - name: APP_NAME
