@@ -3,8 +3,8 @@ kind: ClusterRole
 metadata:
   name: cicd-example-role
   annotations:
-    template-version: 5.0.4
-    tested-operator-version: 0.2.1
+    template-version: 5.0.5
+    tested-operator-version: 0.2.5
 rules:
 - apiGroups:
   - apps
