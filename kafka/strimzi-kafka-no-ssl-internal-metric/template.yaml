@@ -137,23 +137,6 @@ objects:
 - apiVersion: monitoring.coreos.com/v1
   kind: PodMonitor
   metadata:
-    name: ${APP_NAME}-cluster-operator-metrics
-    labels:
-      app: strimzi
-      release: prometheus
-  spec:
-    selector:
-      matchLabels:
-        strimzi.io/kind: cluster-operator
-    namespaceSelector:
-      matchNames:
-        - ${NAMESPACE}
-    podMetricsEndpoints:
-    - path: /metrics
-      port: http
-- apiVersion: monitoring.coreos.com/v1
-  kind: PodMonitor
-  metadata:
     name: ${APP_NAME}-entity-operator-metrics
     labels:
       app: strimzi
