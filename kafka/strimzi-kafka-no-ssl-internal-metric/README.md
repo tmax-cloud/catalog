@@ -1,7 +1,7 @@
 # Strimzi In-cluster With Meric Kafka Template Guide
 
 ## Prerequisite
-- https://github.com/tmax-cloud/install-kafka-operator를 통해 strimzi cluster operator가 설치 되어 있어야 합니다.
+- https://github.com/tmax-cloud/install-kafka-operator 를 통해 strimzi cluster operator가 설치 되어 있어야 합니다.
 - Prometheus 및 Grafana가 설치 되어 있어야 합니다.
 
 ## Description
