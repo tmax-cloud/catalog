@@ -66,7 +66,7 @@ kubectl apply -f instance.yaml
 
 ## Grafana Dashboard 예시
 - Kafka Exporter
-  - https://github.com/strimzi/strimzi-kafka-operator/blob/main/examples/metrics/grafana-dashboards/strimzi-kafka-exporter.json
+  - https://github.com/tmax-cloud/install-hyperauth/blob/main/manifest/kafka_exporter_grafana_dashboard.json
 - Kafka Broker
   - https://github.com/strimzi/strimzi-kafka-operator/blob/main/examples/metrics/grafana-dashboards/strimzi-kafka.json
 - Zookeeper
