@@ -20,7 +20,7 @@
 
 1. Redis 컨테이너 내부 진입 및 redis 접속
     ```bash
-    kubectl exec -it `kubectl get pod --selector=app=redis -n redis -o jsonpath='{$.items[0].metadata.name}'` -n redis -- redis-cli -a "mypassword"
+    kubectl exec -it `kubectl get pod --selector=app={인스턴스 이름}-redis -n {네임스페이스} -o jsonpath='{$.items[0].metadata.name}'` -n {네임스페이스} -- redis-cli -a "{패스워드}"
     ```
 
 2. 데이터 저장/조회 예시 (string 타입)
