@@ -84,19 +84,23 @@ parameters:
   displayName: AppName
   description: Application name
   required: true
+  valueType: string
 - name: DB_STORAGE
   displayName: DBStorage
   description: Storage size for DB
   required: true
+  valueType: string
 - name: STORAGE_CLASS
   displayName: Storage class name
   description: Storage class for DB
   value: csi-cephfs-sc
   required: true
+  valueType: string
 - name: SERVICE_TYPE
   displayName: ServiceType
   description: Service Type (ClusterIP/NodePort/LoadBalancer)
   required: true
+  valueType: string
 plans:
 - name: '@@PLAN_NAME@@'
   description: '@@PLAN_DESCRIPTION@@'
