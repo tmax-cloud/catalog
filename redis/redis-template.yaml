@@ -125,7 +125,7 @@ objects:
           - name: REDIS_ADDR
             value: "localhost:6379"
           resources:
-            requests:
+            limits:
               cpu: 300m
               memory: 300Mi
           ports:
