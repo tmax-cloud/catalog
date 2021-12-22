@@ -16,46 +16,55 @@ parameters:
   displayName: AppName
   description: A Kafka Name
   required: true 
+  valueType: string
 - name: IS_EXTERNAL
   displayName: Is Kafka Service External
   description: Is Kafka Pub/Sub From/To Out-Cluster (true / false)
   value: "false"
   required: true
+  valueType: string
 - name: KAFKA_STORAGE
   displayName: Kafka Storage
   description: Kafka Storage size
   value: 5Gi
   required: true
+  valueType: string
 - name: STORAGE_CLASS
   displayName: StorageClass
   description: Storage class name
   value: csi-cephfs-sc
   required: true
+  valueType: string
 - name: KAFKA_RESOURCE_CPU
   displayName: KafkaResourceCPU
   description: Kafka Resource request, CPU (e.g., 1)
   value: 1
   required: true
+  valueType: string
 - name: KAFKA_RESOURCE_MEM
   displayName: KafkaResourceMem
   description: Kafka Resource request, Mem (e.g., 1Gi)
   value: 1Gi
   required: true
+  valueType: string
 - name: ZOOKEEPER_RESOURCE_CPU
   displayName: KafkaResourceCPU
   description: Kafka Resource request, CPU (e.g., 1)
   value: 1
   required: true
+  valueType: string
 - name: ZOOKEEPER_RESOURCE_MEM
   displayName: KafkaResourceMem
   description: Kafka Resource request, Mem (e.g., 1Gi)
   value: 1Gi
   required: true
+  valueType: string
 - name: DEFAULT_TOPIC
   displayName: DefaultTopic
   description: Default Topic name
   value: tmax
-  required: false              
+  required: false
+  valueType: string            
 objects:
 - apiVersion: v1
   kind: ServiceAccount

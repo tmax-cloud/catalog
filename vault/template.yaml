@@ -15,36 +15,43 @@ parameters:
 - name: APP_NAME
   displayName: AppName
   description: A Vault Name
-  required: true 
+  required: true
+  valueType: string 
 - name: NAMESPACE
   displayName: Namespace
   description: A Vault Namespace
   required: true   
+  valueType: string
 - name: SERVICE_TYPE
   displayName: Vault Service Type
   description: (ClusterIP / LoadBalancer)
   value: "ClusterIP"
   required: true
+  valueType: string
 - name: VAULT_STORAGE
   displayName: Vault Storage
   description: Vault Storage size
   value: 5Gi
   required: true
+  valueType: string
 - name: STORAGE_CLASS
   displayName: StorageClass
   description: Storage class name
   value: csi-cephfs-sc
   required: true
+  valueType: string
 - name: VAULT_RESOURCE_CPU
   displayName: VaultResourceCPU
   description: Vault Resource request, CPU (e.g., 1)
   value: 250m
   required: true
+  valueType: string
 - name: VAULT_RESOURCE_MEM
   displayName: VaultResourceMem
   description: Vault Resource request, Mem (e.g., 1Gi)
   value: 256Mi
   required: true
+  valueType: string
 objects:
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: ClusterRole

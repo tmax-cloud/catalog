@@ -14,11 +14,13 @@ parameters:
   description: redis insight name
   value: tmax
   required: true
+  valueType: string
 - name: SERVICE_TYPE
   displayName: service_type
   description: service type (ClusterIP, NodePort, LoadBalancer)
   value: NodePort
   required: true
+  valueType: string
 
 objects:
 - apiVersion: v1

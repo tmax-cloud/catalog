@@ -21,15 +21,18 @@ parameters:
   displayName: DeploymentName
   description: Deployment name
   required: true
+  valueType: string
 - name: STORAGE
   displayName: StorageSize
   description: Size of a storage (e.g., 100Mi, 10Gi, ...)
   required: true
+  valueType: string
 - name: STORAGE_CLASS
   displayName: StorageClass
   description: Storage class
   value: csi-cephfs-sc
   required: true
+  valueType: string
 plans:
 - bindable: false
   description: Nexus package server

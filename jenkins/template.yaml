@@ -79,19 +79,23 @@ parameters:
   displayName: AppName
   description: A Jenkins Deployment Name
   required: true
+  valueType: string
 - name: STORAGE
   displayName: Storage
   description: Storage size
   required: true
+  valueType: string
 - name: STORAGE_CLASS
   displayName: StorageClass
   description: Storage class
   value: csi-cephfs-sc
   required: true
+  valueType: string
 - name: SERVICE_TYPE
   displayName: ServiceType
   description: Service Type (ClusterIP/NodePort/LoadBalancer)
   required: true
+  valueType: string
 plans:
 - name: jenkins-plan1
   description: "Jenkins Plan"

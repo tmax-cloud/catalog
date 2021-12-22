@@ -19,29 +19,35 @@ parameters:
   displayName: AppName
   description: A GitLab Deployment Name
   required: true
+  valueType: string
 - name: STORAGE
   displayName: Storage
   description: Storage size
   required: true
+  valueType: string
 - name: STORAGE_CLASS
   displayName: StorageClass
   description: Storage class name
   value: csi-cephfs-sc
   required: true
+  valueType: string
 - name: SERVICE_TYPE
   displayName: ServiceType
   description: Service Type (ClusterIP/NodePort/LoadBalancer/Ingress)
   required: true
+  valueType: string
 - name: EXTERNAL_URL
   displayName: ExternalURL
   description: External URL, if it's different from the default endpoint of SERVICE_TYPE
   required: false
   value: ''
+  valueType: string
 - name: WEB_NODE_IP
   displayName: WebNodeIP
   description: (Only for NodePort type) Web NodeIP
   required: false
   value: ''
+  valueType: string
 - name: WEB_NODE_PORT
   displayName: WebNodePort
   description: (Only for NodePort type) Web NodePort
@@ -53,6 +59,7 @@ parameters:
   description: (Only for Ingress type) Ingress hostname
   required: false
   value: ''
+  valueType: string
 - name: SSH_PORT
   displayName: SshPort
   description: SSH port for git clone/pull/push
@@ -63,35 +70,42 @@ parameters:
   displayName: ResourceCPU
   description: Resource request, CPU (e.g., 1)
   required: true
+  valueType: string
 - name: RESOURCE_MEM
   displayName: ResourceMem
   description: Resource request, Mem (e.g., 1Gi)
   required: true
+  valueType: string
 - name: KEYCLOAK_URL
   displayName: Keycloak URL
   description: Keycloak URL (including protocol)
   value: ''
   required: false
+  valueType: string
 - name: KEYCLOAK_CLIENT
   displayName: Keycloak Client
   description: keycloak client name
   value: ''
   required: false
+  valueType: string
 - name: KEYCLOAK_SECRET
   displayName: Keycloak Secret
   description: Keycloak client secret
   value: ''
   required: false
+  valueType: string
 - name: KEYCLOAK_TLS_SECRET_NAME
   displayName: Keycloak TLS Secret name
   description: Secret name where keycloak's tls file is located
   value: ''
   required: false
+  valueType: string
 - name: TLS_SECRET_NAME
   displayName: user TLS Secret name
   description: Secret name where user's tls file is located
   value: ''
   required: false
+  valueType: string
 objects:
 - apiVersion: v1
   kind: ServiceAccount
