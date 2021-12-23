@@ -17,24 +17,28 @@ parameters:
   description: postgres db user id
   value: kong
   required: true
+  valueType: string
 
 - name: DB_PASSWORD
   displayName: db_password
   description: postgres db user password
   value: kong
   required: true
+  valueType: string
 
 - name: DB_DATABASE
   displayName: db_database
   description: postgres db table name
   value: kong
   required: true
+  valueType: string
 
 - name: STORAGE_VOLUME
   displayName: StorageVolume
   description: Storage class volume (Unit = Gi)
   value: 1Gi
   required: true
+  valueType: string
 
 objects:
 - apiVersion: v1

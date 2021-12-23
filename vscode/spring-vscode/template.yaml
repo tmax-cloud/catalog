@@ -18,29 +18,35 @@ parameters:
     displayName: AppName
     description: A VS Code Deployment Name
     required: true
+    valueType: string
   - name: STORAGE
     displayName: Storage
     description: Storage size
     required: true
+    valueType: string
   - name: STORAGE_CLASS
     displayName: StorageClass
     description: Storage class
     value: csi-cephfs-sc
     required: true
+    valueType: string
   - name: SERVICE_TYPE
     displayName: ServiceType
     description: Service Type (ClusterIP/NodePort/LoadBalancer/Ingress)
     required: true
+    valueType: string
   - name: EXTERNAL_URL
     displayName: ExternalURL
     description: External URL, if it's different from the default endpoint of SERVICE_TYPE
     required: false
     value: ''
+    valueType: string
   - name: WEB_NODE_IP
     displayName: WebNodeIP
     description: (Only for NodePort type) Web NodeIP
     required: false
     value: ''
+    valueType: string
   - name: WEB_NODE_PORT
     displayName: WebNodePort
     description: (Only for NodePort type) Web NodePort
@@ -52,16 +58,19 @@ parameters:
     description: (Only for Ingress type) Ingress hostname
     required: false
     value: ''
+    valueType: string
   - name: GIT_EMAIL
     displayName: GitEmail
     description: Git emial for git config
     required: false
     value: ''
+    valueType: string
   - name: GIT_USERNAME
     displayName: GitUserName
     description: Git username for git config
     required: false
     value: ''
+    valueType: string
 objects:
 - apiVersion: v1
   kind: ServiceAccount

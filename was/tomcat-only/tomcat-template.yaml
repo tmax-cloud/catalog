@@ -25,18 +25,22 @@ parameters:
   displayName: AppName
   description: Application name
   required: true
+  valueType: string
 - name: SERVICE_TYPE
   displayName: ServiceType
   description: Service Type (ClusterIP/NodePort/LoadBalancer)
   required: true
+  valueType: string
 - name: RESOURCE_CPU
   displayName: DeployResourceCpu
   description: Deployment resource (cpu)
   required: true
+  valueType: string
 - name: RESOURCE_MEM
   displayName: DeployResourceMem
   description: Deployment resource (mem)
   required: true
+  valueType: string
 objects:
 - apiVersion: v1
   kind: Service

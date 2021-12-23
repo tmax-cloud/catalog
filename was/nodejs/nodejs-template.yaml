@@ -25,37 +25,45 @@ parameters:
   displayName: AppName
   description: Application name
   required: true
+  valueType: string
 - name: GIT_TYPE
   displayName: GitType
   description: Git Type (gitlab or github)
   default: gitlab
   required: true
+  valueType: string
 - name: GIT_API_URL
   displayName: GitApiUrl
   description: Git API URL (e.g., http://)
   required: false
+  valueType: string
 - name: GIT_REPOSITORY
   displayName: GitRepository
   description: Git Repo. (e.g., tmax-cloud/cicd-operator)
   required: true
+  valueType: string
 - name: GIT_TOKEN_SECRET
   displayName: GitTokenSecret
   description: Git Token Secret Name (with 'token' key)
   required: true
+  valueType: string
 - name: IMAGE_URL
   displayName: ImageURL
   description: Output Image URL
   required: true
+  valueType: string
 - name: REGISTRY_SECRET_NAME
   displayName: RegistrySecret
   description: Secret for accessing image registry
   required: false
   value: ''
+  valueType: string
 - name: STORAGE_CLASS
   displayName: StorageClass
   description: Storage class for ci workspace
   required: true
   value: csi-cephfs-sc
+  valueType: string
 - name: WAS_PORT
   displayName: wasPort
   description: WAS Port
@@ -65,24 +73,29 @@ parameters:
   displayName: ServiceType
   description: Service Type (ClusterIP/NodePort/LoadBalancer)
   required: true
+  valueType: string
 - name: PACKAGE_SERVER_URL
   displayName: PackageServerUrl
   description: URL (including protocol, ip, port, and path) of private package server
     (e.g., devpi, pypi, verdaccio, ...)
   required: false
+  valueType: string
 - name: DEPLOY_ENV_JSON
   displayName: DeployEnvJson
   description: Deployment environment variable in JSON object form
   required: false
   value: '{}'
+  valueType: string
 - name: DEPLOY_RESOURCE_CPU
   displayName: DeployResourceCpu
   description: Deployment resource (cpu)
   required: true
+  valueType: string
 - name: DEPLOY_RESOURCE_MEM
   displayName: DeployResourceMem
   description: Deployment resource (mem)
   required: true
+  valueType: string
 objects:
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: RoleBinding

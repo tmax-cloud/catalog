@@ -14,11 +14,13 @@ parameters:
   description: redis instnace name
   value: tmax
   required: true
+  valueType: string
 - name: REDIS_PASSWORD
   displayName: redis_password
   description: redis password
   value: mypassword
   required: true
+  valueType: string
 
 objects:
 - apiVersion: v1

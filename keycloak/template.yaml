@@ -17,41 +17,49 @@ parameters:
   displayName: AppName
   description: A Keycloak Name
   required: true
+  valueType: string
 - name: KEYCLOAK_VERSION
   displayName: KeycloakImageVersion
   description: Keycloak Container Image Version Based on https://quay.io/repository/keycloak/keycloak?tab=tags
   value: 11.0.2
-  required: true    
+  required: true   
+  valueType: string 
 - name: KEYCLOAK_STORAGE
   displayName: Keycloak Storage
   description: Keycloak Storage size
   value: 5Gi
   required: true
+  valueType: string
 - name: STORAGE_CLASS
   displayName: StorageClass
   description: Storage class name
   value: csi-cephfs-sc
   required: true
+  valueType: string
 - name: KEYCLOAK_RESOURCE_CPU
   displayName: KeycloakResourceCPU
   description: Keycloak Resource request, CPU (e.g., 1)
   value: 1
   required: true
+  valueType: string
 - name: KEYCLOAK_RESOURCE_MEM
   displayName: KeycloakResourceMem
   description: Keycloak Resource request, Mem (e.g., 1Gi)
   value: 1Gi
   required: true
+  valueType: string
 - name: POSTGRESQL_RESOURCE_CPU
   displayName: PostgresqlResourceCPU
   description: Postgresql Resource request, CPU (e.g., 1)
   value: 1
   required: true
+  valueType: string
 - name: POSTGRESQL_RESOURCE_MEM
   displayName: PostgresqlResourceMem
   description: Postgresql Resource request, Mem (e.g., 1Gi)
   value: 1Gi
-  required: true                    
+  required: true   
+  valueType: string                 
 objects:
 - apiVersion: v1
   kind: Secret
