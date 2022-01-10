@@ -3,7 +3,7 @@ kind: ClusterTemplate
 metadata:
   name: spring-vscode-template
   annotations:
-    template-version: 5.0.5
+    template-version: 5.0.6
     tested-operator-version: 0.2.5
 shortDescription: VS Code Deployment
 longDescription: Visual Studio Code Deployment

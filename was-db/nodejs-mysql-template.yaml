@@ -3,7 +3,7 @@ kind: ClusterTemplate
 metadata:
   name: nodejs-mysql-template
   annotations:
-    template-version: 5.0.5
+    template-version: 5.0.6
     tested-operator-version: 0.2.5
 imageUrl: https://i.imgur.com/ImDhuQF.png
 provider: tmax
@@ -367,7 +367,7 @@ objects:
             - git-checkout
         - name: deploy
           skipCheckout: true
-          image: docker.io/tmaxcloudck/cicd-util:5.0.5
+          image: docker.io/tmaxcloudck/cicd-util:5.0.6
           imagePullPolicy: Always
           env:
             - name: APP_NAME

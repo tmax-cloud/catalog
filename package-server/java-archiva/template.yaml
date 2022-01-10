@@ -3,7 +3,7 @@ kind: ClusterTemplate
 metadata:
   name: archiva-package-server
   annotations:
-    template-version: 5.0.5
+    template-version: 5.0.6
     tested-operator-version: 0.2.5
 imageUrl: http://archiva.apache.org/images/archiva.png
 provider: tmax

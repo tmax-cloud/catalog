@@ -3,7 +3,7 @@ kind: ClusterTemplate
 metadata:
   name: verdaccio-package-server
   annotations:
-    template-version: 5.0.5
+    template-version: 5.0.6
     tested-operator-version: 0.2.5
 imageUrl: https://verdaccio.org/img/logo/banner/png/verdaccio-banner@2x.png
 provider: tmax

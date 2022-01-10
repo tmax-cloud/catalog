@@ -4,7 +4,7 @@ metadata:
   name: nodejs-mysql-template-instance
   namespace: default
   annotations:
-    template-version: 5.0.5
+    template-version: 5.0.6
     tested-operator-version: 0.2.5
 spec:
   clustertemplate:

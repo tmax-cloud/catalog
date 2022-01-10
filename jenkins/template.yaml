@@ -3,7 +3,7 @@ kind: ClusterTemplate
 metadata:
   name: jenkins-template
   annotations:
-    template-version: 5.0.5
+    template-version: 5.0.6
     tested-operator-version: 0.2.5
 shortDescription: "Jenkins Deployment"
 longDescription: "Jenkins Deployment"
