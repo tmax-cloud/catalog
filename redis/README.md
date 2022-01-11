@@ -44,7 +44,9 @@
 
 ## Grafana Dashboard 예시
 - Redis Exporter
-  - https://github.com/oliver006/redis_exporter/blob/master/contrib/grafana_prometheus_redis_dashboard.json
+  - Grafana에서 redis-grafana-dashboard.json 파일 import를 통해 사용 가능
+  - 원본 json 파일
+    - https://github.com/oliver006/redis_exporter/blob/master/contrib/grafana_prometheus_redis_dashboard.json
   * 비고 : ${DS_PROMETHEUS}를 prometheus로 치환해야 함
 
 ## Redis Insight 적용
