@@ -55,7 +55,7 @@ objects:
               fieldRef:
                 fieldPath: metadata.namespace
         - name: s2b-build-container
-          image: tmaxcloudck/source2build:v5.0 
+          image: tmaxcloudck/source2build:v5.1 
           imagePullPolicy: IfNotPresent
           volumeMounts:
           - name: git-token
