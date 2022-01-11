@@ -30,8 +30,6 @@ objects:
         labels:
           app: ${POD_NAME}-java-s2b
       spec:
-        imagePullSecrets:
-        - name: shleecred
         serviceAccountName: ${POD_NAME}-s2b-account
         initContainers:
         - command:
