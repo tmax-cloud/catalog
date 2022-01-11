@@ -53,7 +53,7 @@ objects:
               fieldRef:
                 fieldPath: metadata.namespace
         - name: s2b-build-container
-          image: tmaxcloudck/source2build:v5.1 
+          image: tmaxcloudck/source2build:v5.2 
           imagePullPolicy: IfNotPresent
           volumeMounts:
           - name: git-token
@@ -102,7 +102,7 @@ objects:
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: Role
   metadata:
-    name: secret-reader-s2b
+    name: ${POD_NAME}-secret-reader-s2b
     namespace: $(USR_NAMESPACE)
   rules:
   - apiGroups: [""]
@@ -111,7 +111,7 @@ objects:
 - apiVersion: rbac.authorization.k8s.io/v1
   kind: RoleBinding
   metadata:
-    name: read-secrets-s2b
+    name: ${POD_NAME}-read-secrets-s2b
     namespace: $(USR_NAMESPACE)
   subjects:
   - kind: ServiceAccount
@@ -119,7 +119,7 @@ objects:
   roleRef:
     apiGroup: rbac.authorization.k8s.io
     kind: Role
-    name: secret-reader-s2b
+    name: ${POD_NAME}-secret-reader-s2b
 - apiVersion: v1
   kind: Service
   metadata:
