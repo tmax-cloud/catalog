@@ -30,7 +30,10 @@ objects:
   type: Opaque
   stringData:
     redis-config: |
-      maxmemory 20mb
+      # Uncomment below configuration
+      # if you want to limit memory.
+      # By default, there is no limit.
+      # maxmemory 20mb
       maxmemory-policy allkeys-lru
       appendonly yes
       appendfilename "appendonly.aof"
