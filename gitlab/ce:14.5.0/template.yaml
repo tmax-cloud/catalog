@@ -171,6 +171,7 @@ objects:
   metadata:
     name: ${APP_NAME}-ingress
     annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: "1024m"
       kubernetes.io/ingress.class: nginx-shd
   spec:
     tls:
@@ -304,7 +305,7 @@ objects:
             gitlab_rails['gitlab_shell_ssh_port'] = $PORT_SSH
             prometheus['enable'] = false
             prometheus['monitor_kubernetes'] = false
-            unicorn['worker_processes'] = 4
+            gitlab_rails['initial_root_password'] = "12345678"
             grafana['enable'] = false
             EOT
             # Add keycloak
@@ -424,7 +425,7 @@ objects:
 
         containers:
         - name: ${APP_NAME}
-          image: docker.io/gitlab/gitlab-ce:13.6.4-ce.0
+          image: docker.io/gitlab/gitlab-ce:14.5.0-ce.0
           command:
           - /bin/sh
           - -c

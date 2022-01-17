@@ -1,0 +1,27 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: gitlab-template-instance
+  namespace: default
+  annotations:
+    template-version: 5.0.6
+    tested-operator-version: 0.2.5
+spec:
+  clustertemplate:
+    metadata:
+      name: gitlab-template
+    parameters:
+    - name: APP_NAME
+      value: gitlab-test-deploy
+    - name: STORAGE
+      value: 30Gi
+    - name: STORAGE_CLASS
+      value: csi-cephfs-sc
+    - name: SERVICE_TYPE
+      value: LoadBalancer
+    - name: SSH_PORT
+      value: 2221
+    - name: RESOURCE_CPU
+      value: "1"
+    - name: RESOURCE_MEM
+      value: 4Gi
