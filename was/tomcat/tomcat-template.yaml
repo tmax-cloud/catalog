@@ -80,6 +80,7 @@ parameters:
     (e.g., devpi, pypi, verdaccio, ...)
   required: false
   valueType: string
+  value: ''
 - name: DEPLOY_ENV_JSON
   displayName: DeployEnvJson
   description: Deployment environment variable in JSON object form
