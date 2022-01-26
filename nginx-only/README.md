@@ -90,4 +90,4 @@ kubectl -n {만든 namespace명} delete -f nginx-instance.yaml
 ```
 
 ### 기타 생성 확인 가능 사항
-LoadBalance type으로 생성한 service 객체의 EXTERNAM-IP를 url로 browser 접속 후 확인
+LoadBalance type으로 생성한 service 객체의 EXTERNAL-IP를 url로 browser 접속 후 확인
