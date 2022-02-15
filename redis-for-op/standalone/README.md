@@ -8,7 +8,7 @@ Redis Operator를 이용하는 Custom Resource(Redis) 생성 template
 ## Cluster Template
 - 생성
     ```shell
-    kubectl apply -f redis-standalone-template.yaml
+    kubectl apply -f template.yaml
     ```
 - 확인
     - 다음 명령어 입력 후 출력여부 확인
@@ -17,13 +17,13 @@ Redis Operator를 이용하는 Custom Resource(Redis) 생성 template
     ```
 - 삭제
     ```shell
-    kubectl delete -f redis-standalone-template.yaml
+    kubectl delete -f template.yaml
     ```
 
 ## Template Instance
 - 생성
     ```shell
-    kubectl apply -f redis-standalone-instance.yaml
+    kubectl apply -f instance.yaml
     ```
 - 확인
     - 다음 명령어로 확인 후 ${APP_NAME}-0의 NAME확인
@@ -32,5 +32,5 @@ Redis Operator를 이용하는 Custom Resource(Redis) 생성 template
     ```
 - 삭제
     ```shell
-    kubectl delete -f redis-standalone-instance.yaml
+    kubectl delete -f instance.yaml
     ```

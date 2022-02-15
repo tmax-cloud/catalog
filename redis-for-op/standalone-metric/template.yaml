@@ -1,0 +1,129 @@
+apiVersion: tmax.io/v1
+kind: ClusterTemplate
+metadata:
+  name: ot-container-kit-redis-metric-standalone-template
+shortDescription: "Redis standalone metric Deployment"
+longDescription: "Redis standalone metric with redis-operator"
+urlDescription: https://ot-container-kit.github.io/redis-operator/
+provider: tmax
+categories:
+- redis
+- standalone
+- metric
+- ot-container-kit
+parameters:
+- name: APP_NAME
+  displayName: A Redis Standalone Metric
+  description: metadata name
+  value: "redis-metric-standalone"
+  required: true
+  valueType: string
+- name: REDIS_METRIC_SECRET_PASSWORD
+  displayName: Redis Secret password
+  description: Redis Secret password
+  value: "abcd=="
+  required: true
+  valueType: string
+- name: REDIS_METRIC_STANDALONE_STORAGE
+  displayName: Redis Standalone Metric Storage
+  description: Redis Standalone Metric size
+  value: 5Gi
+  required: true
+  valueType: string
+- name: STORAGE_CLASS
+  displayName: Storage Class
+  description: Storage class name
+  value: csi-cephfs-sc
+  required: true
+  valueType: string
+- name: REDIS_METRIC_STANDALONE_RESOURCE_CPU
+  displayName: Redis Standalone Metric Resource CPU
+  description: Redis Standalone Metric resource request, CPU (e.g., 1)
+  value: 1
+  required: true
+  valueType: string
+- name: REDIS_METRIC_STANDALONE_RESOURCE_MEM
+  displayName: Redis Standalone Metric Resource Mem
+  description: Redis Standalone Metric Resource request, Mem (e.g., 1Gi)
+  value: 1Gi
+  required: true
+  valueType: string
+objects:
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: ${APP_NAME}-secret-metric-standalone
+  stringData:
+    password: ${REDIS_METRIC_SECRET_PASSWORD}
+
+- apiVersion: monitoring.coreos.com/v1
+  kind: ServiceMonitor
+  metadata:
+    name: ${APP_NAME}-monitoring-metric-standalone
+    labels:
+      app: ${APP_NAME}
+      release: prometheus
+  spec:
+    selector:
+      matchLabels:
+        app: ${APP_NAME}
+    endpoints:
+    - port: "redis-exporter"
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APP_NAME}-svc-metric-standalone
+  spec:
+    selector:
+      app: ${APP_NAME}
+    ports:
+    - name: redis-metric-standalone
+      protocol: TCP
+      port: 6379
+      targetPort: 6379
+    - name: redis-exporter
+      protocol: TCP
+      port: 9121
+      targetPort: 9121
+
+- apiVersion: redis.redis.opstreelabs.in/v1beta1
+  kind: Redis
+  metadata:
+    name: ${APP_NAME}
+  spec:
+    kubernetesConfig:
+      image: quay.io/opstree/redis:v6.2.5
+      imagePullPolicy: IfNotPresent
+      resources:
+        requests:
+          cpu: ${REDIS_METRIC_STANDALONE_RESOURCE_CPU}
+          memory: ${REDIS_METRIC_STANDALONE_RESOURCE_MEM}
+        limits:
+          cpu: ${REDIS_METRIC_STANDALONE_RESOURCE_CPU}
+          memory: ${REDIS_METRIC_STANDALONE_RESOURCE_MEM}
+      redisSecret:
+        name: ${APP_NAME}-secret-metric-standalone
+        key: password
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: ${STORAGE_CLASS}
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: ${REDIS_METRIC_STANDALONE_STORAGE}
+    redisExporter:
+      enabled: true
+      image: quay.io/opstree/redis-exporter:1.0
+      imagePullPolicy: Always
+      resources:
+        requests:
+          cpu: ${REDIS_METRIC_STANDALONE_RESOURCE_CPU}
+          memory: ${REDIS_METRIC_STANDALONE_RESOURCE_MEM}
+        limits:
+          cpu: ${REDIS_METRIC_STANDALONE_RESOURCE_CPU}
+          memory: ${REDIS_METRIC_STANDALONE_RESOURCE_MEM}
+      env:
+      - name: REDIS_EXPORTER_INCL_SYSTEM_METRICS
+        value: "true"
+---
