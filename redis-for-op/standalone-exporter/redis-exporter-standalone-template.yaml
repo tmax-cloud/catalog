@@ -1,0 +1,129 @@
+apiVersion: tmax.io/v1
+kind: ClusterTemplate
+metadata:
+  name: ot-container-kit-redis-exporter-standalone-template
+shortDescription: "Redis standalone exporter Deployment"
+longDescription: "Redis standalone exporter with redis-operator"
+urlDescription: https://ot-container-kit.github.io/redis-operator/
+provider: tmax
+categories:
+- redis
+- standalone
+- exporter
+- ot-container-kit
+parameters:
+- name: APP_NAME
+  displayName: A Redis Standalone Exporter
+  description: metadata name
+  value: "redis-exporter-standalone"
+  required: true
+  valueType: string
+- name: REDIS_EXPORTER_SECRET_PASSWORD
+  displayName: Redis Secret password
+  description: Redis Secret password
+  value: "abcd=="
+  required: true
+  valueType: string
+- name: REDIS_EXPORTER_STANDALONE_STORAGE
+  displayName: Redis Standalone Exporter Storage
+  description: Redis Standalone Exporter size
+  value: 5Gi
+  required: true
+  valueType: string
+- name: STORAGE_CLASS
+  displayName: Storage Class
+  description: Storage class name
+  value: csi-cephfs-sc
+  required: true
+  valueType: string
+- name: REDIS_EXPORTER_STANDALONE_RESOURCE_CPU
+  displayName: Redis Standalone Exporter Resource CPU
+  description: Redis Standalone Exporter resource request, CPU (e.g., 1)
+  value: 1
+  required: true
+  valueType: string
+- name: REDIS_EXPORTER_STANDALONE_RESOURCE_MEM
+  displayName: Redis Standalone Exporter Resource Mem
+  description: Redis Standalone Exporter Resource request, Mem (e.g., 1Gi)
+  value: 1Gi
+  required: true
+  valueType: string
+objects:
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: ${APP_NAME}-secret-exporter-standalone
+  stringData:
+    password: ${REDIS_EXPORTER_SECRET_PASSWORD}
+
+- apiVersion: monitoring.coreos.com/v1
+  kind: ServiceMonitor
+  metadata:
+    name: ${APP_NAME}-monitoring-exporter-standalone
+    labels:
+      app: ${APP_NAME}
+      release: prometheus
+  spec:
+    selector:
+      matchLabels:
+        app: ${APP_NAME}
+    endpoints:
+    - port: "redis-exporter"
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APP_NAME}-svc-exporter-standalone
+  spec:
+    selector:
+      app: ${APP_NAME}
+    ports:
+    - name: redis-exporter-standalone
+      protocol: TCP
+      port: 6379
+      targetPort: 6379
+    - name: redis-exporter
+      protocol: TCP
+      port: 9121
+      targetPort: 9121
+    
+- apiVersion: redis.redis.opstreelabs.in/v1beta1
+  kind: Redis
+  metadata:
+    name: ${APP_NAME}
+  spec:
+    kubernetesConfig:
+      image: quay.io/opstree/redis:v6.2.5
+      imagePullPolicy: IfNotPresent
+      resources:
+        requests:
+          cpu: ${REDIS_EXPORTER_STANDALONE_RESOURCE_CPU}
+          memory: ${REDIS_EXPORTER_STANDALONE_RESOURCE_MEM}
+        limits:
+          cpu: ${REDIS_EXPORTER_STANDALONE_RESOURCE_CPU}
+          memory: ${REDIS_EXPORTER_STANDALONE_RESOURCE_MEM}
+      redisSecret:
+        name: ${APP_NAME}-secret-exporter-standalone
+        key: password
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: ${STORAGE_CLASS}
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: ${REDIS_EXPORTER_STANDALONE_STORAGE}
+    redisExporter:
+      enabled: true
+      image: quay.io/opstree/redis-exporter:1.0
+      imagePullPolicy: Always
+      resources:
+        requests:
+          cpu: ${REDIS_EXPORTER_STANDALONE_RESOURCE_CPU}
+          memory: ${REDIS_EXPORTER_STANDALONE_RESOURCE_MEM}
+        limits:
+          cpu: ${REDIS_EXPORTER_STANDALONE_RESOURCE_CPU}
+          memory: ${REDIS_EXPORTER_STANDALONE_RESOURCE_MEM}
+      env:
+      - name: REDIS_EXPORTER_INCL_SYSTEM_METRICS
+        value: "true"
+---
