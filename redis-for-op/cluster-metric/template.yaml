@@ -1,38 +1,38 @@
 apiVersion: tmax.io/v1
 kind: ClusterTemplate
 metadata:
-  name: ot-container-kit-redis-exporter-cluster-template
-shortDescription: "Redis Exporter Cluster Deployment"
-longDescription: "Redis Exporter Cluster with redis-operator"
+  name: ot-container-kit-redis-metric-cluster-template
+shortDescription: "Redis Metric Cluster Deployment"
+longDescription: "Redis Metric Cluster with redis-operator"
 urlDescription: https://ot-container-kit.github.io/redis-operator/
 provider: tmax
 categories:
 - redis
-- exporter
+- metric
 - cluster
 - ot-container-kit
 parameters:
 - name: APP_NAME
-  displayName: A Redis Exporter Cluster
+  displayName: A Redis Metric Cluster
   description: metadata name
-  value: "redis-exporter-cluster"
+  value: "redis-metric-cluster"
   required: true
   valueType: string
-- name: REDIS_EXPORTER_CLUSTER_SECRET_PASSWORD
+- name: REDIS_METRIC_CLUSTER_SECRET_PASSWORD
   displayName: Redis Secret password
   description: Redis Secret password
   value: "abcd=="
   required: true
   valueType: string
-- name: REDIS_EXPORTER_CLUSTER_REPLICA_COUNT
-  displayName: Redis Exporter Cluster Replica Count
-  description: Number of redis exporter cluster pair(leader, follower), greater 3 or equal to
+- name: REDIS_METRIC_CLUSTER_REPLICA_COUNT
+  displayName: Redis Metric Cluster Replica Count
+  description: Number of redis metric(leader, follower) cluster pair(leader, follower), greater 3 or equal to
   value: 3
   required: true
   valueType: number
-- name: REDIS_EXPORTER_CLUSTER_STORAGE
-  displayName: Redis Exporter Cluster Storage
-  description: Redis Exporter Cluster storage size
+- name: REDIS_METRIC_CLUSTER_STORAGE
+  displayName: Redis Metric Cluster Storage
+  description: Redis Metric Cluster storage size
   value: 5Gi
   required: true
   valueType: string
@@ -42,15 +42,15 @@ parameters:
   value: csi-cephfs-sc
   required: true
   valueType: string
-- name: REDIS_EXPORTER_CLUSTER_RESOURCE_CPU
-  displayName: Redis Exporter Cluster Resource CPU
-  description: Redis Exporter Cluster resource request, CPU (e.g., 1)
-  value: 1
+- name: REDIS_METRIC_CLUSTER_RESOURCE_CPU
+  displayName: Redis Metric Cluster Resource CPU
+  description: Redis Metric Cluster resource request, CPU (e.g., 1)
+  value: 100m
   required: true
   valueType: string
-- name: REDIS_EXPORTER_CLUSTER_RESOURCE_MEM
-  displayName: Redis Exporter Cluster Resource Mem
-  description: Redis Exporter Cluster Resource request, Mem (e.g., 1Gi)
+- name: REDIS_METRIC_CLUSTER_RESOURCE_MEM
+  displayName: Redis Metric Cluster Resource Mem
+  description: Redis Metric Cluster Resource request, Mem (e.g., 1Gi)
   value: 1Gi
   required: true
   valueType: string
@@ -58,13 +58,13 @@ objects:
 - apiVersion: v1
   kind: Secret
   metadata:
-    name: ${APP_NAME}-secret-cluster-exporter
+    name: ${APP_NAME}-secret-cluster-metric
   stringData:
-    password: ${REDIS_EXPORTER_CLUSTER_SECRET_PASSWORD}
+    password: ${REDIS_METRIC_CLUSTER_SECRET_PASSWORD}
 - apiVersion: monitoring.coreos.com/v1
   kind: ServiceMonitor
   metadata:
-    name: ${APP_NAME}-monitoring-exporter-cluster
+    name: ${APP_NAME}-monitoring-metric-cluster
     labels:
       app: ${APP_NAME}-leader
       release: prometheus
@@ -77,12 +77,12 @@ objects:
 - apiVersion: v1
   kind: Service
   metadata:
-    name: ${APP_NAME}-svc-exporter-cluster
+    name: ${APP_NAME}-svc-metric-cluster
   spec:
     selector:
       app: ${APP_NAME}-leader
     ports:
-    - name: redis-exporter-cluster
+    - name: redis-metric-cluster
       protocol: TCP
       port: 6379
       targetPort: 6379
@@ -95,19 +95,19 @@ objects:
   metadata:
     name: ${APP_NAME}
   spec:
-    clusterSize: ${REDIS_EXPORTER_CLUSTER_REPLICA_COUNT}
+    clusterSize: ${REDIS_METRIC_CLUSTER_REPLICA_COUNT}
     kubernetesConfig:
       image: quay.io/opstree/redis:v6.2.5
       imagePullPolicy: IfNotPresent
       resources:
         requests:
-          cpu: ${REDIS_EXPORTER_CLUSTER_RESOURCE_CPU}
-          memory: ${REDIS_EXPORTER_CLUSTER_RESOURCE_MEM}
+          cpu: ${REDIS_METRIC_CLUSTER_RESOURCE_CPU}
+          memory: ${REDIS_METRIC_CLUSTER_RESOURCE_MEM}
         limits:
-          cpu: ${REDIS_EXPORTER_CLUSTER_RESOURCE_CPU}
-          memory: ${REDIS_EXPORTER_CLUSTER_RESOURCE_MEM}
+          cpu: ${REDIS_METRIC_CLUSTER_RESOURCE_CPU}
+          memory: ${REDIS_METRIC_CLUSTER_RESOURCE_MEM}
       redisSecret:
-        name: ${APP_NAME}-secret-cluster-exporter
+        name: ${APP_NAME}-secret-cluster-metric
         key: password
     redisExporter:
       enabled: true
@@ -115,11 +115,11 @@ objects:
       imagePullPolicy: Always
       resources:
         requests:
-          cpu: ${REDIS_EXPORTER_CLUSTER_RESOURCE_CPU}
-          memory: ${REDIS_EXPORTER_CLUSTER_RESOURCE_MEM}
+          cpu: ${REDIS_METRIC_CLUSTER_RESOURCE_CPU}
+          memory: ${REDIS_METRIC_CLUSTER_RESOURCE_MEM}
         limits:
-          cpu: ${REDIS_EXPORTER_CLUSTER_RESOURCE_CPU}
-          memory: ${REDIS_EXPORTER_CLUSTER_RESOURCE_MEM}
+          cpu: ${REDIS_METRIC_CLUSTER_RESOURCE_CPU}
+          memory: ${REDIS_METRIC_CLUSTER_RESOURCE_MEM}
       env:
       - name: REDIS_EXPORTER_INCL_SYSTEM_METRICS
         value: "true"
@@ -130,5 +130,5 @@ objects:
           accessModes: ["ReadWriteOnce"]
           resources:
             requests:
-              storage: ${REDIS_EXPORTER_CLUSTER_STORAGE}
+              storage: ${REDIS_METRIC_CLUSTER_STORAGE}
 ---
