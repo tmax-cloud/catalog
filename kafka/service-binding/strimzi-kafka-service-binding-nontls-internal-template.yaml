@@ -1,0 +1,148 @@
+apiVersion: tmax.io/v1
+kind: ClusterTemplate
+metadata:
+  name: strimzi-kafka-service-binding-nontls-internal-template
+shortDescription: "Kafka Service-Binding Deployment"
+longDescription: "Kafka Zookeeper Service-Binding Deployment"
+urlDescription: https://strimzi.io/
+imageUrl: "https://i.pinimg.com/originals/6a/46/51/6a46514d46e0edd07ab4e80c828d60a8.png"
+provider: tmax
+categories:
+- kafka
+- zookeeper
+- message
+- strimzi
+parameters:
+- name: APP_NAME
+  displayName: AppName
+  description: A Kafka Name
+  required: true
+  valueType: string
+- name: KAFKA_REPLICA_COUNT
+  displayName: Kafka Replica Count
+  description: Number of Kafka Broker
+  value: 1
+  required: true
+  valueType: number
+- name: ZOOKEEPER_REPLICA_COUNT
+  displayName: Zookeeper Replica Count
+  description: Number of Zookeeper, Usually Same as KAFKA_REPLICA_COUNT
+  value: 1
+  required: true
+  valueType: number
+- name: KAFKA_STORAGE
+  displayName: Kafka Storage
+  description: Kafka Storage size
+  value: 5Gi
+  required: true
+  valueType: string
+- name: ZOOKEEPER_STORAGE
+  displayName: Zookeeper Storage
+  description: Zookeeper Storage size
+  value: 5Gi
+  required: true
+  valueType: string
+- name: STORAGE_CLASS
+  displayName: StorageClass
+  description: Storage class name
+  value: csi-cephfs-sc
+  required: true
+  valueType: string
+- name: KAFKA_RESOURCE_CPU
+  displayName: KafkaResourceCPU
+  description: Kafka Resource request, CPU (e.g., 1)
+  value: 1
+  required: true
+  valueType: string
+- name: KAFKA_RESOURCE_MEM
+  displayName: KafkaResourceMem
+  description: Kafka Resource request, Mem (e.g., 1Gi)
+  value: 1Gi
+  required: true
+  valueType: string
+- name: ZOOKEEPER_RESOURCE_CPU
+  displayName: KafkaResourceCPU
+  description: Kafka Resource request, CPU (e.g., 1)
+  value: 1
+  required: true
+  valueType: string
+- name: ZOOKEEPER_RESOURCE_MEM
+  displayName: KafkaResourceMem
+  description: Kafka Resource request, Mem (e.g., 1Gi)
+  value: 1Gi
+  required: true   
+  valueType: string
+# - name: LISTENER_NAME
+#   displayname: listenerName
+#   descripion: listener name
+#   value: plain
+#   required: true
+#   valueType: string
+# - name: TLS_CONNECTION
+#   displayName: tlsConnection
+#   description: TLS setting
+#   value: false
+#   required: true
+#   valueType: boolean
+# - name: CONNECTION_TYPE
+#   displayName: connectionType
+#   description: Connection Type (Internal/External)
+#   value: internal
+#   required: true
+#   valueType: string
+# - name: CONNECTION_PORT
+#   displayName: connectionPort
+#   description: connection port setting (PLAIN:9092, TLS:9093)
+#   value: 9092
+#   required: true
+#   valueType: number
+objects:
+- apiVersion: kafka.strimzi.io/v1beta2
+  kind: Kafka
+  metadata:
+    name: ${APP_NAME}
+    annotations:
+    "service.binding": "path={.metadata.name}-service-binding-credentials,objectType=Secret"
+  spec:
+    kafka:
+      version: 3.0.0
+      replicas: ${KAFKA_REPLICA_COUNT}
+      resources: 
+        requests:
+          memory: ${KAFKA_RESOURCE_MEM}
+          cpu: ${KAFKA_RESOURCE_CPU}
+        limits:
+          memory: ${KAFKA_RESOURCE_MEM}
+          cpu: ${KAFKA_RESOURCE_CPU}
+      listeners:
+        - name: plain
+          port: 9092
+          type: internal
+          tls: false
+      config:
+        offsets.topic.replication.factor: 1
+        transaction.state.log.replication.factor: 1
+        transaction.state.log.min.isr: 1
+        log.message.format.version: "3.0"
+        inter.broker.protocol.version: "3.0"
+      storage:
+        type: persistent-claim
+        size: ${KAFKA_STORAGE}
+        class: ${STORAGE_CLASS}
+    zookeeper:
+      replicas: ${ZOOKEEPER_REPLICA_COUNT}
+      resources:
+        requests:
+          memory: ${ZOOKEEPER_RESOURCE_MEM}
+          cpu: ${ZOOKEEPER_RESOURCE_CPU}
+        limits:
+          memory: ${ZOOKEEPER_RESOURCE_MEM}
+          cpu: ${ZOOKEEPER_RESOURCE_CPU}
+      storage:
+        type: persistent-claim
+        size: ${ZOOKEEPER_STORAGE}
+        class: ${STORAGE_CLASS}
+    entityOperator:
+      topicOperator: {}
+      userOperator: {}
+
