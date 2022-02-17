@@ -1,0 +1,18 @@
+apiVersion: binding.operators.coreos.com/v1alpha1
+kind: ServiceBinding
+metadata:
+  name: kafka-service-binding
+spec:
+  bindAsFiles: true                 ## TLS 연결인 경우 true, NON-TLS 인 경우 false
+  namingStrategy: '{{ .name | upper }}'
+  application:
+    version: ${RESOURCE_VERSION}    ##연결하고자 하는 resource version
+    group: ${RESOURCE_GROUP}        ##연결하고자 하는 resource group
+    kind: ${RESOURCE_KINDS}         ##연결하고자 하는 resource kind 지정
+    name: ${RESOURCE__NAME}         ##연결하고자 하는 resource name 지정
+  services:
+  - version: v1beta2
+    group: kafka.strimzi.io
+    kind: Kafka
+    name: ${KAFKA_NAME}             ##kafka app name 지정
+
