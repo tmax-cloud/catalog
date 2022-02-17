@@ -4,7 +4,10 @@
 - https://github.com/tmax-cloud/install-kafka-operator를 통해 cluster operator, bindable operator가 설치 되어 있어야 합니다.
 - RedHat Service Binding Operator가 설치되어있어야 합니다.  
   (https://github.com/redhat-developer/service-binding-operator/releases/latest/download/release.yaml)
-- Service Binding Operator에 kafka.strimzi.io/v1beta2 Kafka ClusterRole을 추가합니다. (ClusterRoleBinding은 자동 aggregation 됩니다.)
+- Service Binding Operator에 kafka.strimzi.io/v1beta2 Kafka ClusterRole을 추가합니다.  
+  ```bash
+  kubectl apply -f strimzi-kafka-sbo-clusterrole.yaml
+  ```
 
 ## Description
 - Strimzi kafka Operator를 통해 Internal, Non-tls/tls 설정이 가능한 kafka template 입니다
