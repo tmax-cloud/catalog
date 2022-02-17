@@ -1,0 +1,16 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: service-binding-strimzi-kafka-viewer-role
+  labels:
+    servicebinding.io/controller : "true"
+rules:
+- apiGroups:
+  - "kafka.strimzi.io"
+  resources:
+  - "kafkas"
+  - "kafkas/status"
+  verbs:
+  - "get"
+  - "list"
+
