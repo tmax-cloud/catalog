@@ -1,27 +1,27 @@
 apiVersion: tmax.io/v1
 kind: TemplateInstance
 metadata:
-  name: kong-konga-template-instance
+  name: kong-only-instance
   # 적용하고자 하는 namespace를 생성 후 해당 namespace 적용
   namespace: smlee
 spec:
   clustertemplate:
     metadata:
-      name: kong-konga-template
+      name: kong-only-template
     parameters:
       #생성하고자 하는 postgres의 user ID
     - name: DB_USER
-      value: "userid"
+      value: "postuser"
 
       #생성하고자 하는 PWD
     - name: DB_PASSWORD
-      value: "userpwd"
+      value: "postpwd"
 
       #생성하고자 하는 DB 명
     - name: DB_DATABASE
-      value: "userdb"
+      value: "postdb"
 
-      #storage의 volume 설정
-    - name: STORAGE_VOLUME
-      value: 1Gi
+      #postgres 접속 주소
+    - name: DB_HOST
+      value: "smleetest-service"
 

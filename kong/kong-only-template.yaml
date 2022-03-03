@@ -1,0 +1,222 @@
+apiVersion: tmax.io/v1
+kind: ClusterTemplate
+metadata:
+  name: kong-only-template
+shortDescription: "Kong Demo Template"
+urlDescription: "https://konghq.com/"
+provider: tmax
+categories:
+- kong
+- busybox
+
+parameters:
+- name: DB_USER
+  displayName: db_user
+  description: postgres db user id
+  value: kong
+  required: true
+  valueType: string
+
+- name: DB_PASSWORD
+  displayName: db_password
+  description: postgres db user password
+  value: kong
+  required: true
+  valueType: string
+
+- name: DB_DATABASE
+  displayName: db_database
+  description: postgres db table name
+  value: kong
+  required: true
+  valueType: string
+
+- name: DB_HOST
+  displayName: db_host
+  description: postgres db host (ip adress /service name)
+  value: postgres-service
+  required: true
+  valueType: string
+
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: tcp
+      service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    name: kong-proxy
+  spec:
+    ports:
+    - name: proxy
+      port: 80
+      protocol: TCP
+      targetPort: 8000
+    - name: proxy-ssl
+      port: 443
+      protocol: TCP
+      targetPort: 8443
+    - name: admin-api
+      port: 8444
+      protocol: TCP
+      targetPort: 8444
+    selector:
+      app: kong-api-gateway
+    type: LoadBalancer
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: kong-validation-webhook
+  spec:
+    ports:
+    - name: webhook
+      port: 443
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      app: kong-api-gateway
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    labels:
+      app: kong-api-gateway
+    name: kong-api-gateway
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app: kong-api-gateway
+    template:
+      metadata:
+        annotations:
+          kuma.io/gateway: enabled
+          traffic.sidecar.istio.io/includeInboundPorts: ""
+        labels:
+          app: kong-api-gateway
+      spec:
+        containers:
+        - env:
+          - name: KONG_DATABASE
+            value: postgres
+          - name: KONG_PG_HOST
+            value: ${DB_HOST}
+          - name: KONG_PG_USER
+            value: ${DB_USER}
+          - name: KONG_PG_PASSWORD
+            value: ${DB_PASSWORD}
+          - name: KONG_PG_DATABASE
+            value: ${DB_DATABASE}
+          - name: KONG_PROXY_LISTEN
+            value: 0.0.0.0:8000, 0.0.0.0:8443 ssl http2
+          - name: KONG_PORT_MAPS
+            value: 80:8000, 443:8443
+          - name: KONG_ADMIN_LISTEN
+            value: 0.0.0.0:8444 ssl
+          - name: KONG_STATUS_LISTEN
+            value: 0.0.0.0:8100
+          - name: KONG_NGINX_WORKER_PROCESSES
+            value: "2"
+          - name: KONG_ADMIN_ACCESS_LOG
+            value: /dev/stdout
+          - name: KONG_ADMIN_ERROR_LOG
+            value: /dev/stderr
+          - name: KONG_PROXY_ERROR_LOG
+            value: /dev/stderr
+          image: tmaxcloudck/kong:2.5
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                - /bin/sh
+                - -c
+                - kong quit
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status
+              port: 8100
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          name: proxy
+          ports:
+          - containerPort: 8000
+            name: proxy
+            protocol: TCP
+          - containerPort: 8443
+            name: proxy-ssl
+            protocol: TCP
+          - containerPort: 8100
+            name: metrics
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /status
+              port: 8100
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+        initContainers:
+        - command:
+          - /bin/sh
+          - -c
+          - while true; do kong migrations list; if [[ 0 -eq $? ]]; then exit 0; fi;
+            sleep 2;  done;
+          env:
+          - name: KONG_PG_HOST
+            value: ${DB_HOST}
+          - name: KONG_PG_USER
+            value: ${DB_USER}
+          - name: KONG_PG_PASSWORD
+            value: ${DB_PASSWORD}
+          - name: KONG_PG_DATABASE
+            value: ${DB_DATABASE}
+          image: tmaxcloudck/kong:2.5
+          name: wait-for-migrations
+- apiVersion: batch/v1
+  kind: Job
+  metadata:
+    name: kong-migrations
+  spec:
+    template:
+      metadata:
+        name: kong-migrations
+      spec:
+        containers:
+        - command:
+          - /bin/sh
+          - -c
+          - kong migrations bootstrap
+          env:
+          - name: KONG_PG_DATABASE
+            value: ${DB_DATABASE}
+          - name: KONG_PG_USER
+            value: ${DB_USER}
+          - name: KONG_PG_PASSWORD
+            value: ${DB_PASSWORD} 
+          - name: KONG_PG_HOST
+            value: ${DB_HOST}
+          - name: KONG_PG_PORT
+            value: "5432"
+          image: tmaxcloudck/kong:2.5
+          name: kong-migrations
+        initContainers:
+        - command:
+          - /bin/sh
+          - -c
+          - until nc -zv $KONG_PG_HOST $KONG_PG_PORT -w1; do echo 'waiting for db';
+            sleep 1; done
+          env:
+          - name: KONG_PG_HOST
+            value: ${DB_HOST}
+          - name: KONG_PG_PORT
+            value: "5432"
+          image: tmaxcloudck/busybox:1.34.0
+          imagePullPolicy: IfNotPresent
+          name: wait-for-postgres
+        restartPolicy: OnFailure

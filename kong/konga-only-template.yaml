@@ -1,7 +1,7 @@
 apiVersion: tmax.io/v1
 kind: ClusterTemplate
 metadata:
-  name: konga-template
+  name: konga-only-template
 shortDescription: "Kong with Konga Demo Template"
 urlDescription: "https://https://github.com/pantsel/konga"
 provider: tmax
@@ -27,6 +27,13 @@ parameters:
   displayName: db_database
   description: postgres db table name
   value: kong
+  required: true
+  valueType: string
+
+- name: DB_HOST
+  displayName: db_database
+  description: postgres db host (ip adress /service name)
+  value: postgres-service
   required: true
   valueType: string
 
@@ -80,7 +87,7 @@ objects:
             - name: DB_ADAPTER
               value: "postgres"
             - name: DB_HOST
-              value: "postgres.$(NAMESPACE).svc.cluster.local"
+              value: ${DB_HOST}
             - name: DB_USER
               value: ${DB_USER}
             - name: DB_PASSWORD
