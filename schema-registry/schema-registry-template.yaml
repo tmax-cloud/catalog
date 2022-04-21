@@ -1,0 +1,91 @@
+apiVersion: tmax.io/v1
+kind: ClusterTemplate
+metadata:
+  name: schema-registry-template
+shortDescription: "Schema Registry for Kafka Connect"
+urlDescription: "https://docs.confluent.io/platform/current/schema-registry/index.html"
+provider: tmax
+categories:
+- kafka
+- schema-registry
+
+parameters:
+- name: SCHEMA_REGISTRY_NAME
+  displayName: schema_registry_name
+  description: schema registry name
+  value: my-schema
+  required: true
+  valueType: string
+- name: KAFKA_BOOTSTRAP_SERVER
+  displayName: kafka_bootstrap_server
+  description: kafka bootstrap server
+  value: my-cluster-kafka-bootstrap
+  required: true
+  valueType: string
+- name: SERVICE_TYPE
+  displayName: service_type
+  description: service type (ClusterIP, NodePort, LoadBalancer)
+  value: ClusterIP
+  required: true
+  valueType: string
+
+objects:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: ${SCHEMA_REGISTRY_NAME}-schema-registry
+    labels:
+    	app.kubernetes.io/name: schema-registry
+    	app.kubernetes.io/instance: ${SCHEMA_REGISTRY_NAME}
+  spec:
+    replicas: 1
+    selector:
+      matchLabels:
+        app.kubernetes.io/name: schema-registry
+    	  app.kubernetes.io/instance: ${SCHEMA_REGISTRY_NAME}
+    template:
+      metadata:
+        name: ${SCHEMA_REGISTRY_NAME}
+        labels:
+          app.kubernetes.io/name: schema-registry
+    	    app.kubernetes.io/instance: ${SCHEMA_REGISTRY_NAME}
+      spec:
+        containers:
+          - name: schema-registry
+            image: confluentinc/cp-schema-registry:7.0.1
+            env:
+            - name: SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS
+              value: ${KAFKA_BOOTSTRAP_SERVER}:9092
+            - name: SCHEMA_REGISTRY_HOST_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: SCHEMA_REGISTRY_LISTENERS
+              value: http://0.0.0.0:8081
+            - name: SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL
+              value: PLAINTEXT
+            ports:
+            - containerPort: 8081
+            resources:
+              limits:
+                cpu: "500m"
+                memory: "500Mi"
+              requests:
+                cpu: "300m"
+                memory: "100Mi"
+  ---
+  
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${SCHEMA_REGISTRY_NAME}-schema-registry-service
+    labels:
+      app.kubernetes.io/name: schema-registry-service
+    	app.kubernetes.io/instance: ${SCHEMA_REGISTRY_NAME}-schema-registry-service
+  spec:
+    ports:
+    - port: 8081
+    selector:
+      app.kubernetes.io/name: schema-registry
+      app.kubernetes.io/instance: ${SCHEMA_REGISTRY_NAME}
+    type: ${SERVICE_TYPE} # ClusterIP, NodePort, LoadBalancer

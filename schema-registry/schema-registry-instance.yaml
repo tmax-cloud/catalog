@@ -1,0 +1,16 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: schema-registry-template-instance
+  namespace: kafka
+spec:
+  clustertemplate:
+    metadata:
+      name: schema-registry-template
+    parameters:
+    - name: SCHEMA_REGISTRY_NAME
+      value: "my-schema"
+    - name: KAFKA_BOOTSTRAP_SERVER
+      value: "my-cluster-kafka-bootstrap"
+    - name: SERVICE_TYPE
+      value: "NodePort"
