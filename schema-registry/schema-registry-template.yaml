@@ -35,20 +35,20 @@ objects:
   metadata:
     name: ${SCHEMA_REGISTRY_NAME}-schema-registry
     labels:
-    	app.kubernetes.io/name: schema-registry
-    	app.kubernetes.io/instance: ${SCHEMA_REGISTRY_NAME}
+      app.kubernetes.io/name: schema-registry
+      app.kubernetes.io/instance: ${SCHEMA_REGISTRY_NAME}
   spec:
     replicas: 1
     selector:
       matchLabels:
         app.kubernetes.io/name: schema-registry
-    	  app.kubernetes.io/instance: ${SCHEMA_REGISTRY_NAME}
+        app.kubernetes.io/instance: ${SCHEMA_REGISTRY_NAME}
     template:
       metadata:
         name: ${SCHEMA_REGISTRY_NAME}
         labels:
           app.kubernetes.io/name: schema-registry
-    	    app.kubernetes.io/instance: ${SCHEMA_REGISTRY_NAME}
+          app.kubernetes.io/instance: ${SCHEMA_REGISTRY_NAME}
       spec:
         containers:
           - name: schema-registry
@@ -73,19 +73,17 @@ objects:
               requests:
                 cpu: "300m"
                 memory: "100Mi"
-  ---
-  
 - apiVersion: v1
   kind: Service
   metadata:
     name: ${SCHEMA_REGISTRY_NAME}-schema-registry-service
     labels:
       app.kubernetes.io/name: schema-registry-service
-    	app.kubernetes.io/instance: ${SCHEMA_REGISTRY_NAME}-schema-registry-service
+      app.kubernetes.io/instance: ${SCHEMA_REGISTRY_NAME}-schema-registry-service
   spec:
     ports:
     - port: 8081
     selector:
       app.kubernetes.io/name: schema-registry
       app.kubernetes.io/instance: ${SCHEMA_REGISTRY_NAME}
-    type: ${SERVICE_TYPE} # ClusterIP, NodePort, LoadBalancer
+    type: ${SERVICE_TYPE}
