@@ -71,6 +71,12 @@ parameters:
     required: false
     value: ''
     valueType: string
+  - name: INGRESS_CLASS
+    displayName: ingress class
+    description: ingress class name
+    value: 'nginx'
+    required: false
+    valueType: string
 objects:
 - apiVersion: v1
   kind: ServiceAccount
@@ -89,7 +95,7 @@ objects:
     resources: ["deployments"]
     resourceNames: ["${APP_NAME}"]
     verbs: ["get", "list", "create", "patch", "update", "delete"]
-  - apiGroups: ["networkings", "extensions"]
+  - apiGroups: ["networkings", "extensions","networking.k8s.io"]
     resources: ["ingresses"]
     resourceNames: ["${APP_NAME}-ingress"]
     verbs: ["get", "list", "create", "patch", "update", "delete"]
@@ -118,20 +124,24 @@ objects:
       targetPort: 8080
     selector:
       app: ${APP_NAME}
-- apiVersion: networking.k8s.io/v1beta1
+- apiVersion: networking.k8s.io/v1
   kind: Ingress
   metadata:
     name: ${APP_NAME}-ingress
     annotations:
-      kubernetes.io/ingress.class: nginx-shd
+      kubernetes.io/ingress.class: ${INGRESS_CLASS}
   spec:
     rules:
     - host: waiting.ip
       http:
         paths:
         - backend:
-            serviceName: ${APP_NAME}-service
-            servicePort: 80
+            service:
+              name: ${APP_NAME}-service
+              port:
+                number: 80
+          path: /
+          pathType: Prefix
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:

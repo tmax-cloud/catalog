@@ -111,7 +111,7 @@ parameters:
   description: ingress class name
   value: 'nginx'
   required: false
-  valueType: string  
+  valueType: string
 objects:
 - apiVersion: v1
   kind: ServiceAccount
@@ -133,7 +133,7 @@ objects:
   - apiGroups: [""]
     resources: ["secrets"]
     verbs: ["get", "list", "create", "patch", "update", "delete"]
-  - apiGroups: ["networkings", "extensions"]
+  - apiGroups: ["networkings", "extensions","networking.k8s.io"]
     resources: ["ingresses"]
     resourceNames: ["${APP_NAME}-ingress"]
     verbs: ["get", "list", "create", "patch", "update", "delete"]
