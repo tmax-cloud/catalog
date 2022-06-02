@@ -63,7 +63,7 @@ parameters:
 - name: GIT_TYPE
   displayName: GitType
   description: Git Type (gitlab or github)
-  default: gitlab
+  value: gitlab
   required: true
   valueType: string
 - name: GIT_API_URL
