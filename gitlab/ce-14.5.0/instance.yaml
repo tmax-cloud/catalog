@@ -25,3 +25,5 @@ spec:
       value: "1"
     - name: RESOURCE_MEM
       value: 4Gi
+    - name: INGRESS_CLASS
+      value: nginx
