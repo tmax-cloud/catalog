@@ -53,7 +53,7 @@ objects:
               fieldRef:
                 fieldPath: metadata.namespace
         - name: s2b-build-container
-          image: tmaxcloudck/source2build:v5.3 
+          image: tmaxcloudck/source2build:v5.3
           imagePullPolicy: IfNotPresent
           volumeMounts:
           - name: git-token
@@ -86,7 +86,7 @@ objects:
           - name: JDK_VERSION
             value: ${JDK_VERSION}
           - name: GRADLE_VERSION
-            value: ${GRADLE_VERSION}          
+            value: ${GRADLE_VERSION}
           ports:
           - containerPort: 9090
           - containerPort: 80
@@ -156,19 +156,19 @@ parameters:
   required: true
   valueType: string
 - description: secret name containing git token for a private repository
-  displayName: USR_SECRET_NAME  
+  displayName: USR_SECRET_NAME
   name: USR_SECRET_NAME
   required: false
   value: ""
   valueType: string
 - description: github user id for a github private repository
-  displayname: GITHUB_ID
+  displayName: GITHUB_ID
   name: GITHUB_ID
   required: false
   value: ""
   valueType: string
 - description: gitlab token name for a gitlab private project
-  displayname: GITLAB_TOKEN_NAME
+  displayName: GITLAB_TOKEN_NAME
   name: GITLAB_TOKEN_NAME
   required: false
   value: ""
@@ -184,7 +184,7 @@ parameters:
   required: true
   valueType: string
 - description: jdk version
-  diaplayName: JDK_VERSION
+  displayName: JDK_VERSION
   name: JDK_VERSION
   required: false
   value: 12
