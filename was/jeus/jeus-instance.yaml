@@ -1,0 +1,43 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: jeus-cicd-template-instance
+  namespace: jeus-test
+  annotations:
+    template-version: 5.0.6
+    tested-operator-version: 0.2.5
+  labels:
+    cicd-template-was: jeus
+spec:
+  clustertemplate:
+    metadata:
+      name: jeus-cicd-template
+    parameters:
+    - name: APP_NAME
+      value: jeus-sample-app
+    - name: GIT_TYPE
+      value: "<github/gitlab>"
+    - name: GIT_API_URL
+      value: "<http://깃주소>"
+    - name: GIT_REPOSITORY
+      value: "<id/repo_name>"
+    - name: GIT_TOKEN_SECRET
+      value: "<git-secret>"
+    - name: IMAGE_URL
+      value: "<이미지주소>"
+    - name: REGISTRY_SECRET_NAME
+      value: "<registry_secret>"
+    - name: STORAGE_CLASS
+      value: "<storage_class>"
+    - name: WAS_PORT
+      value: 8080
+    - name: SERVICE_TYPE
+      value: NodePort
+    - name: PACKAGE_SERVER_URL
+      value: ''
+    - name: DEPLOY_ENV_JSON
+      value: "{}"
+    - name: DEPLOY_RESOURCE_CPU
+      value: 500m
+    - name: DEPLOY_RESOURCE_MEM
+      value: 500Mi

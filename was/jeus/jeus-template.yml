@@ -1,0 +1,234 @@
+apiVersion: tmax.io/v1
+kind: ClusterTemplate
+metadata:
+  name: jeus-cicd-template
+  annotations:
+    template-version: 5.0.6
+    tested-operator-version: 0.2.5
+  labels:
+    cicd-template-was: jeus
+imageUrl: https://upload.wikimedia.org/wikipedia/
+provider: tmax
+recommend: false
+shortDescription: Jeus CI/CD Template
+longDescription: Jeus CI/CD Template
+urlDescription: https://tomcat.apache.org/
+categories:
+- was
+- jeus
+plans:
+- bindable: false
+  description: jeus
+  name: jeus-plan1
+parameters:
+- name: APP_NAME
+  displayName: AppName
+  description: Application name
+  required: true
+  valueType: string
+- name: GIT_TYPE
+  displayName: GitType
+  description: Git Type (gitlab or github)
+  value: gitlab
+  required: true
+  valueType: string
+- name: GIT_API_URL
+  displayName: GitApiUrl
+  description: Git API URL (e.g., http://)
+  required: false
+  valueType: string
+- name: GIT_REPOSITORY
+  displayName: GitRepository
+  description: Git Repo. (e.g., tmax-cloud/cicd-operator)
+  required: true
+  valueType: string
+- name: GIT_TOKEN_SECRET
+  displayName: GitTokenSecret
+  description: Git Token Secret Name (with 'token' key)
+  required: true
+  valueType: string
+- name: IMAGE_URL
+  displayName: ImageURL
+  description: Output Image URL
+  required: true
+  valueType: string
+- name: REGISTRY_SECRET_NAME
+  displayName: RegistrySecret
+  description: Secret for accessing image registry
+  required: false
+  value: ''
+  valueType: string
+- name: STORAGE_CLASS
+  displayName: StorageClass
+  description: Storage class for ci workspace
+  required: true
+  value: csi-cephfs-sc
+  valueType: string
+- name: WAS_PORT
+  displayName: wasPort
+  description: WAS Port
+  valueType: number
+  required: true
+- name: SERVICE_TYPE
+  displayName: ServiceType
+  description: Service Type (ClusterIP/NodePort/LoadBalancer)
+  required: true
+  valueType: string
+- name: PACKAGE_SERVER_URL
+  displayName: PackageServerUrl
+  description: URL (including protocol, ip, port, and path) of private package server
+    (e.g., devpi, pypi, verdaccio, ...)
+  required: false
+  valueType: string
+  value: ''
+- name: DEPLOY_ENV_JSON
+  displayName: DeployEnvJson
+  description: Deployment environment variable in JSON object form
+  required: false
+  value: '{}'
+  valueType: string
+- name: DEPLOY_RESOURCE_CPU
+  displayName: DeployResourceCpu
+  description: Deployment resource (cpu)
+  required: true
+  valueType: string
+- name: DEPLOY_RESOURCE_MEM
+  displayName: DeployResourceMem
+  description: Deployment resource (mem)
+  required: true
+  valueType: string
+objects:
+- apiVersion: rbac.authorization.k8s.io/v1
+  kind: RoleBinding
+  metadata:
+    name: ${APP_NAME}-binding
+  roleRef:
+    apiGroup: rbac.authorization.k8s.io
+    kind: ClusterRole
+    name: cicd-example-role
+  subjects:
+  - kind: ServiceAccount
+    name: ${APP_NAME}-config-sa
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APP_NAME}-service
+    labels:
+      app: ${APP_NAME}
+  spec:
+    type: ${SERVICE_TYPE}
+    ports:
+    - port: ${WAS_PORT}
+    selector:
+      app: ${APP_NAME}
+      tier: was
+- apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: ${APP_NAME}-deploy-cfg
+    labels:
+      app: ${APP_NAME}
+  data:
+    deploy-spec.yaml: |
+      spec:
+        selector:
+          matchLabels:
+            app: ${APP_NAME}
+            tier: was
+        template:
+          metadata:
+            labels:
+              app: ${APP_NAME}
+              tier: was
+          spec:
+            imagePullSecrets:
+            - name: ${REGISTRY_SECRET_NAME}
+            containers:
+            - ports:
+              - containerPort: ${WAS_PORT}
+              resources:
+                requests:
+                  cpu: ${DEPLOY_RESOURCE_CPU}
+                  memory: ${DEPLOY_RESOURCE_MEM}
+                limits:
+                  cpu: ${DEPLOY_RESOURCE_CPU}
+                  memory: ${DEPLOY_RESOURCE_MEM}
+- apiVersion: cicd.tmax.io/v1
+  kind: IntegrationConfig
+  metadata:
+    name: ${APP_NAME}-config
+    labels:
+      app: ${APP_NAME}
+  spec:
+    secrets:
+    - name: ${REGISTRY_SECRET_NAME}
+    workspaces:
+    - name: s2i
+      volumeClaimTemplate:
+        spec:
+          storageClassName: ${STORAGE_CLASS}
+          accessModes:
+          - ReadWriteMany
+          resources:
+            requests:
+              storage: 1Gi
+    git:
+      type: ${GIT_TYPE}
+      apiUrl: ${GIT_API_URL}
+      repository: ${GIT_REPOSITORY}
+      token:
+        valueFrom:
+          secretKeyRef:
+            name: ${GIT_TOKEN_SECRET}
+            key: token
+    jobs:
+      postSubmit:
+      - name: git-checkout
+        image: 172.24.9.40:5000/alpine:3.13.6
+        script: |
+          cp -rT `pwd` $(workspaces.s2i.path)/
+        when:
+          branch:
+          - master
+      - name: s2i
+        tektonTask:
+          taskRef:
+            local:
+              name: s2i
+              kind: ClusterTask
+          params:
+          - name: BUILDER_IMAGE
+            stringVal: 172.24.9.40:5000/tmaxcloudck/s2i-jeus:8
+          - name: PACKAGE_SERVER_URL
+            stringVal: ${PACKAGE_SERVER_URL}
+          - name: IMAGE_URL
+            stringVal: ${IMAGE_URL}
+          workspaces:
+          - name: git-source
+            workspace: s2i
+        when:
+          branch:
+          - master
+        after:
+        - git-checkout
+      - name: deploy
+        skipCheckout: true
+        image: 172.24.9.40:5000/tmaxcloudck/cicd-util:5.0.6
+        imagePullPolicy: Always
+        env:
+        - name: APP_NAME
+          value: ${APP_NAME}
+        - name: CONFIGMAP_NAME
+          value: ${APP_NAME}-deploy-cfg
+        - name: DEPLOY_ENV_JSON
+          value: ${DEPLOY_ENV_JSON}
+        script: |
+          export IMAGE_URL=`cat $(workspaces.s2i.path)/image-url`
+          mkdir -p /generate
+          /cicd-util make-deployment
+          kubectl apply -f /generate/deployment.yaml
+        when:
+          branch:
+          - master
+        after:
+        - s2i
