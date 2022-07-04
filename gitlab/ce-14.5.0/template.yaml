@@ -317,6 +317,7 @@ objects:
             prometheus['monitor_kubernetes'] = false
             gitlab_rails['initial_root_password'] = "12345678"
             grafana['enable'] = false
+            puma['worker_processes'] = 16            
             EOT
             # Add keycloak
             if [[ "${KEYCLOAK_URL}" != "" ]]; then

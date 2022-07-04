@@ -317,6 +317,7 @@ objects:
             prometheus['monitor_kubernetes'] = false
             unicorn['worker_processes'] = 4
             grafana['enable'] = false
+            puma['worker_processes'] = 16            
             EOT
             # Add keycloak
             if [[ "${KEYCLOAK_URL}" != "" ]]; then
