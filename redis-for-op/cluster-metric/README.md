@@ -2,7 +2,7 @@
 Redis Operator를 이용하는 Custom Resource(RedisCluster exporter) 생성 template
 ## Prerequisite
 - k8s cluster(v1.11+)
-- [redis-operator(v0.10.0)](https://ot-container-kit.github.io/redis-operator/)
+- [redis-operator(v0.9.0)](https://ot-container-kit.github.io/redis-operator/)
 
 
 ## Cluster Template

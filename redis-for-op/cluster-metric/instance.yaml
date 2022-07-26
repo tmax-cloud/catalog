@@ -4,7 +4,7 @@ metadata:
   name: ot-container-kit-redis-metric-cluster-template-instance1
   annotations:
     template-version: 5.0.6
-    tested-operator-version: 0.10.0
+    tested-operator-version: 0.9.0
 spec:
   clustertemplate:
     metadata:

@@ -1,0 +1,20 @@
+apiVersion: tmax.io/v1
+kind: TemplateInstance
+metadata:
+  name: redis-proxy-instance
+  annotations:
+    template-version: 5.0.6
+    tested-operator-version: 0.9.0
+spec:
+  clustertemplate:
+    metadata:
+      name: redis-proxy-template
+    parameters:
+    - name: APP_NAME
+      value: "redis-proxy"
+    - name: REDIS_PROXY_SIZE
+      value: 3
+    - name: REDIS_CLUSTER_LEADER_POD_ADDR
+      value: "10.96.170.156:6379"
+    - name: REDIS_PROXY_SVC_TYPE
+      value: NodePort

@@ -1,0 +1,88 @@
+apiVersion: tmax.io/v1
+kind: ClusterTemplate
+metadata:
+  name: redis-proxy-template
+shortDescription: "Redis Proxy Deployment"
+longDescription: "Redis Proxy with redis-operator"
+urlDescription: https://ot-container-kit.github.io/redis-operator/
+provider: tmax
+categories:
+- redis-lab
+- proxy
+parameters:
+- name: APP_NAME
+  displayName: A Redis proxy deployment
+  description: redis proxy deployment name
+  value: "redis-proxy"
+  required: true
+  valueType: string
+- name: REDIS_PROXY_SIZE
+  displayName: Redis proxy size
+  description: Redis proxy size
+  value: 3
+  required: true
+  valueType: number
+- name: REDIS_CLUSTER_LEADER_SVC_ADDR
+  displayName: Redis cluster leader service ip & port
+  description: Redis cluster leader service IP & port
+  value: "10.96.170.156:6379"
+  required: true
+  valueType: string
+- name: REDIS_PROXY_SVC_TYPE
+  displayName: Redis proxy service type
+  description: Redis proxy service type
+  value: "NodePort"
+  required: true
+  valueType: string
+
+objects:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: ${APP_NAME}
+    labels:
+      app: ${APP_NAME}-rs
+  spec:
+    replicas: 3
+    
+    selector:
+      matchLabels:
+        app: ${APP_NAME}-rs
+    template:
+      metadata:
+        labels:
+          app: ${APP_NAME}-rs
+      spec:
+        affinity:
+          podAntiAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                    - ${APP_NAME}-rs
+                topologyKey: "kubernetes.io/hostname"
+        containers:
+        - name: ${APP_NAME}-rs
+          image: tmaxcloudck/redis-cluster-proxy:0.0.1
+          imagePullPolicy: IfNotPresent
+          command:
+          - "/usr/local/bin/redis-cluster-proxy"
+          - ${REDIS_CLUSTER_LEADER_SVC_ADDR}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: ${APP_NAME}-service
+    labels:
+      app: ${APP_NAME}-service
+  spec:
+    type: ${REDIS_PROXY_SVC_TYPE}
+    ports:
+    - name: proxy-port
+      port: 7777
+      targetPort: 7777
+    selector:
+      app: ${APP_NAME}-rs
