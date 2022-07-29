@@ -67,7 +67,7 @@ objects:
                 topologyKey: "kubernetes.io/hostname"
         containers:
         - name: ${APP_NAME}-rs
-          image: tmaxcloudck/redis-cluster-proxy:0.0.1
+          image: kornrunner/redis-cluster-proxy
           imagePullPolicy: IfNotPresent
           command:
           - "/usr/local/bin/redis-cluster-proxy"
