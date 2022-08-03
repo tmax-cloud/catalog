@@ -301,7 +301,6 @@ objects:
                     ING_HOST="${INGRESS_HOST}"
                     EXTERNAL_IP="http://${INGRESS_HOST}/"
                 fi
-                NOW_IP=$(kubectl get ingress ${APP_NAME}-ingress -o jsonpath='{.status.loadBalancer.ingress[].ip}')
                 kubectl patch ingress ${APP_NAME}-ingress --type=json -p '[{"op": "replace", "path": "/spec/rules/0/host", "value": "'$ING_HOST'"}]'
             else
                 echo "Something's wrong"
@@ -317,7 +316,7 @@ objects:
             prometheus['monitor_kubernetes'] = false
             unicorn['worker_processes'] = 4
             grafana['enable'] = false
-            puma['worker_processes'] = 16            
+            puma['worker_processes'] = 16
             EOT
             # Add keycloak
             if [[ "${KEYCLOAK_URL}" != "" ]]; then
@@ -380,9 +379,9 @@ objects:
           - -x
           - |
             SVC_TYPE="${SERVICE_TYPE}"
-            ING_HOST=$(kubectl get ingress ${APP_NAME}-ingress -o jsonpath='{.spec.rules[0].host}')
-
             if [[ "$SVC_TYPE" == "Ingress" ]]; then
+              ING_HOST=$(kubectl get ingress ${APP_NAME}-ingress -o jsonpath='{.spec.rules[0].host}')
+
               # if no secret provided, use self-signed certificate
               if [[ "${TLS_SECRET_NAME}" == "" ]]; then
                 NOW_IP=$(kubectl get ingress ${APP_NAME}-ingress -o jsonpath='{.status.loadBalancer.ingress[].ip}')
